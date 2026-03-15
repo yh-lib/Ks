@@ -68,7 +68,7 @@ watch(
                 placeholder="输入密码"
                 :prefix-icon="Lock"
                 show-password
-                
+                @keyup.enter="login(loginInfo.username,loginInfo.password)"
             />
         </el-form-item>
         <!-- 登录：按钮 -->
