@@ -58,6 +58,7 @@ watch(
                 placeholder="输入用户名" 
                 :prefix-icon="User" 
                 clearable
+                class="el-input"
             />
         </el-form-item>
         <!-- 密码：输入表单 -->
@@ -69,6 +70,7 @@ watch(
                 :prefix-icon="Lock"
                 show-password
                 @keyup.enter="login(loginInfo.username,loginInfo.password)"
+                class="el-input"
             />
         </el-form-item>
         <!-- 登录：按钮 -->
@@ -86,13 +88,25 @@ watch(
     justify-content: center; 
     /* align-items: center; */
     .login__el-card{
-        width: 550px;
-        height: 310px;
+        width: 560px;
+        height: 330px;
         margin-top: 10%;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+        border-radius: 10px;
+        text-align: center;        
     }
     .demo-ruleForm{
         width: 80%;
         margin: 7% auto auto auto;
+    }
+    .el-input{
+        height: 50px;
+    }
+    .el-button{
+        width: 30%;
+        height: 40px;
+        margin-top: 20px;
     }
 }
 </style>
