@@ -1,16 +1,19 @@
 <script lang="ts" setup>
 import { computed, reactive, ref, onMounted, onBeforeMount  } from 'vue'
-import { getUserListHandler,deleteUserHandler } from '../../api/user.js'
+import { getUserListHandler as getListHandler,deleteUserHandler as deleteHandler } from '../../api/user.js'
 import { User } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import Add from './Add.vue'
 
+// config
+const titleName = "用户列表"
 interface User {
   username: string
   address: string
   id: number
   qq: string
 }
+
 
 const search = ref('')
 
@@ -39,10 +42,10 @@ const data = reactive({
     }    
 })
 
-// 获取后端数据
+// getList
 const getUserList = () =>{
     loading.value = true
-    getUserListHandler().then((response)=>{
+    getListHandler().then((response)=>{
         if (response.status === 200) {
             data.tableData = response.data.data; // 更新 tableData
             loading.value = false
@@ -51,10 +54,7 @@ const getUserList = () =>{
         }
     })
 }
-// 组件加载时自动调用 getUserList 方法
-onBeforeMount(() => {
-    getUserList();
-})
+
 
 // 加载图标
 const loading = ref(false)
@@ -71,7 +71,7 @@ const deleteUser = (row) => {
         }
     )
     .then(() => {
-        deleteUserHandler(row.id).then((response)=>{
+        deleteHandler(row.id).then((response)=>{
             ElMessage({
                 type: 'success',
                 message: response.data.msg,
@@ -112,6 +112,10 @@ const updateUserOperation = () =>{
     userDialog.value = false
     getUserList()
 }
+// 组件加载时自动调用 getUserList 方法
+onBeforeMount(() => {
+    getUserList();
+})
 </script>
 
 <template>
@@ -129,7 +133,7 @@ const updateUserOperation = () =>{
         </el-dialog>
         <template #header>
             <div class="card-header">
-                <span style="font-size: 24px;">用户列表</span>
+                <span style="font-size: 24px;">{{ titleName }}</span>
                 <el-button type="primary" @click="addUser">添加</el-button>
             </div>
         </template>
