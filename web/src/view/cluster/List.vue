@@ -3,9 +3,42 @@ import { computed, reactive, ref, onMounted, onBeforeMount  } from 'vue'
 import { getClusterListHandler as getListHandler,deleteClusterHandler as deleteHandler } from '../../api/cluster.js'
 import { ElMessage, ElMessageBox} from 'element-plus'
 import { CircleCheck, CircleClose } from '@element-plus/icons-vue'
-// import Add from './Add.vue'
+import Add from './Add.vue'
 
-// 独立配置
+
+// ++++++++++++++++++++++++++++++++  操作逻辑
+// 增
+// add_2:打开添加集群的表单
+const opDialog = ref(false)
+const addItem = () => {
+    method.value='create'
+    data.itemForm={}
+    opDialog.value = true
+}
+// add_4:定义表单初始数据
+const data = reactive({
+    tableData:[] as Cluster[],
+    itemForm:{
+        clusterId:"",
+        clusterAlias:"",
+        clusterVersion:"",
+        clusterLocation:"",
+        clusterStatus:"",
+        clusterSize:""     
+    }    
+})
+// add_7: 监听refresh事件，刷新用户列表
+const updateOp = () =>{
+    userDialog.value = false
+    getList()
+}
+// 删
+// 改
+// 查
+
+
+
+// ++++++++++++++++++++++++++++++++  独立配置
 // Main 标题
 const titleName = "集群列表"
 // Table 表头
@@ -29,7 +62,7 @@ interface Cluster {
 
 
 
-// getList 入口
+// add_8:获取当前列表
 const getList = () =>{
     loading.value = true
     getListHandler().then((response)=>{
@@ -37,7 +70,7 @@ const getList = () =>{
             data.tableData = response.data.data; // 更新 tableData
             loading.value = false
         } else {
-            console.error('获取用户列表失败:', response.msg);
+            console.error('获取列表失败:', response.msg);
         }
     })
 }
@@ -58,16 +91,6 @@ const handleEdit = (index: number, row: User) => {
 const handleDelete = (index: number, row: User) => {
   console.log(index, row)
 }
-
-const data = reactive({
-    tableData:[] as Cluster[],
-    userForm:{
-        username:"",
-        qq:"",
-        address:"",
-        id:""        
-    }    
-})
 
 // 加载图标
 const loading = ref(false)
@@ -99,14 +122,7 @@ const deleteRow = (row) => {
     }) 
 }
 
-// 添加用户
-const userDialog = ref(false)
 
-const addUser = () => {
-    method.value='create'
-    data.userForm={}
-    userDialog.value = true
-}
 // 关闭弹窗时是否刷新用户列表
 const closeDialog = () =>{
     method.value == 'create' && getList()
@@ -121,11 +137,7 @@ const updateUser = (row) => {
     // 打开表单弹窗
     userDialog.value = true
 }
-// 更新用户时刷新用户列表
-const updateUserOperation = () =>{
-    userDialog.value = false
-    getList()
-}
+
 // 组件加载时自动调用 getList 方法
 onBeforeMount(() => {
     getList();
@@ -134,13 +146,14 @@ onBeforeMount(() => {
 
 <template>
     <el-card>
-        <!-- Main 标题 -->
+        <!-- add_1:添加按钮 -->
         <template #header>
             <div class="card-header">
                 <span style="font-size: 24px;">{{ titleName }}</span>
-                <el-button type="primary" @click="addUser">添加</el-button>
+                <el-button type="primary" @click="addItem">添加</el-button>
             </div>
         </template>
+        <!-- none -->
         <el-table :data="filterTableData" style="width: 100%"  height="70vh" v-loading="loading">
             <el-table-column :label="tableTtile.f1.label"  :prop="tableTtile.f1.prop" />
             <el-table-column :label="tableTtile.f2.label"   :prop="tableTtile.f2.prop" />
@@ -154,33 +167,33 @@ onBeforeMount(() => {
             </el-table-column>
             <el-table-column :label="tableTtile.f6.label" :prop="tableTtile.f6.prop" />
             <el-table-column align="right">
-            <template #header>
-                <el-input v-model="search" size="small" placeholder="Type to search" />
-            </template>             
-            <template #default="scope">
-                <el-button :disabled="scope.row.clusterStatus != 'true'" size="small" @click="updateUser(scope.row)">
-                    编辑
-                </el-button>
-                <el-button
-                    size="small"    
-                    type="danger"
-                    @click="deleteRow(scope.row)"
-                >
-                    删除
-                </el-button>
-            </template>
+                <template #header>
+                    <el-input v-model="search" size="small" placeholder="Type to search" />
+                </template>             
+                <template #default="scope">
+                    <el-button :disabled="scope.row.clusterStatus != 'true'" size="small" @click="updateOp(scope.row)">
+                        编辑
+                    </el-button>
+                    <el-button
+                        size="small"    
+                        type="danger"
+                        @click="deleteRow(scope.row)"
+                    >
+                        删除
+                    </el-button>
+                </template>
             </el-table-column>
         </el-table>  
-        <!-- 添加用户的表单 -->
+        <!-- add_3:动态渲染表单抬头/add_5:打开表单-->
         <el-dialog 
-            v-model="userDialog"
+            v-model="opDialog"
             :title="method == 'create' ? '添加集群' : '更新集群'"
-            width="500px"
+            width="50vw"
             @close="closeDialog"
             destroy-on-close
         >
-            <!-- 添加用户的表单组件 -->
-            <!-- <Add :subMethod='method' :subRow="data.userForm" @refresh="updateUserOperation"/> -->
+            <!-- add_6:添加集群表单 -->
+            <Add :subMethod='method' :subRow="data.userForm" @refresh="updateOp"/>
         </el-dialog>            
     </el-card>
 </template>

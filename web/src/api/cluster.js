@@ -12,8 +12,8 @@ export const deleteClusterHandler = (id) => {
 }
 
 // 添加集群
-export const addClusterHandler = (clusterInfo) => {
-    return request(API_CONFIG.clusterAddApi, clusterInfo, 'post', 10000)
+export const addClusterHandler = (itemFrom) => {
+    return request(API_CONFIG.clusterAddApi, itemFrom, 'post', 10000)
 }
 
 
