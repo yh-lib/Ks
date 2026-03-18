@@ -24,6 +24,8 @@ var (
 	JwtExpTime int64 // jwt token 过期时间，单位：分钟
 	Username   string
 	Password   string
+	// inCluster相关配置
+	MetadataNamespace string // 元数据存储的 namespace
 )
 
 // 规范返回给前端的数据
@@ -71,14 +73,15 @@ func initLogConfig(logLevel string) {
 }
 
 func init() {
-	logs.Info(nil, "Start loading the program configuration...")
+	logs.Info(nil, "开始加载程序配置...")
 	// 配置环境变量默认值
-	viper.SetDefault("LOG_LEVEL", "debug")                           // 日志输出级别
+	viper.SetDefault("LOG_LEVEL", "Debug")                           // 日志输出级别
 	viper.SetDefault("PORT", ":8080")                                // 程序监听端口
 	viper.SetDefault("JWT_SIGN_KEY", "加密用的SECRET")                   // 获取jwt加密的secret
 	viper.SetDefault("JWT_EXPIRE_TIME", 120)                         // 获取jwt过期时间
 	viper.SetDefault("USERNAME", "E3AFED0047B08059D0FADA10F400C1E5") // 默认用户名：Admin	通过MD5加密
 	viper.SetDefault("PASSWORD", "E64B78FC3BC91BCBC7DC232BA8EC59E0") // 默认密码：Admin123	通过MD5加密
+	viper.SetDefault("METADATA_NAMESPACE", "kubeCtrl")
 	// 绑定环境变量到配置
 	viper.AutomaticEnv()
 	// 获取环境变量值并绑定到程序变量
@@ -86,8 +89,9 @@ func init() {
 	Port = viper.GetString("PORT")
 	JwtSignKey = viper.GetString("JWT_SIGN_KEY")
 	JwtExpTime = viper.GetInt64("JWT_EXPIRE_TIME")
-	Username = viper.GetString("USERNAME") // 获取用户名
-	Password = viper.GetString("PASSWORD") // 获取密码
+	Username = viper.GetString("USERNAME")                    // 获取用户名
+	Password = viper.GetString("PASSWORD")                    // 获取密码
+	MetadataNamespace = viper.GetString("METADATA_NAMESPACE") // 获取元数据存储的namespace
 	// 加载日志输出级别
 	initLogConfig(logLevel)
 	// 日志格式加载完成提示
