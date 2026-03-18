@@ -3,6 +3,7 @@ package routers
 
 import (
 	"server/routers/auth"
+	"server/routers/cluster"
 
 	"github.com/gin-gonic/gin"
 )
@@ -13,4 +14,5 @@ func RegistrerRouters(r *gin.Engine) {
 	// 2. 退出: /api/auth/logout
 	apiGroup := r.Group("/api")
 	auth.RegisterSubRouter(apiGroup)
+	cluster.RegisterSubRouter(apiGroup)
 }

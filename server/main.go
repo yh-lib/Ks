@@ -4,6 +4,8 @@ package main
 import (
 	"server/config"
 	_ "server/controllers/initController"
+	"server/middlerwares"
+	"server/routers"
 
 	"github.com/gin-gonic/gin"
 )
@@ -13,9 +15,9 @@ func main() {
 	// 注册gin引擎
 	r := gin.Default()
 	// // 使用中间件鉴权
-	// r.Use(middlerwares.JwtAuth)
+	r.Use(middlerwares.JwtAuth)
 	// // 注册路由
-	// routers.RegistrerRouters(r)
+	routers.RegistrerRouters(r)
 	// // 启动程序
 	r.Run(config.Port)
 }
