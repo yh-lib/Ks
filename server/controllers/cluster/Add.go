@@ -3,6 +3,7 @@ package cluster
 import (
 	"context"
 	"server/config"
+	"server/utils"
 	"server/utils/logs"
 
 	"github.com/gin-gonic/gin"
@@ -23,6 +24,16 @@ func Add(c *gin.Context) {
 		return
 	}
 	logs.Info(map[string]any{"集群别名": clusterConfig.Alias, "集群ID": clusterConfig.Id}, "开始添加集群")
+	// 判断集群是否正常
+	ClusterStatus, err := clusterConfig.getClusterStatus()
+	if err != nil {
+		msg := "无法获取集群信息:" + err.Error()
+		returnData.Status = 400
+		returnData.Message = msg
+		c.JSON(200, returnData)
+		logs.Error(map[string]any{"error": err.Error()}, "添加集群失败")
+		return
+	}
 	// 创建一个集群配置的 secret
 	var clusterConfigSectet corev1.Secret
 	clusterConfigSectet.Name = clusterConfig.Id
@@ -30,13 +41,12 @@ func Add(c *gin.Context) {
 	clusterConfigSectet.Labels["kubeeasy.com/cluster.metadata"] = "true"
 	// 添加注释，保存集群的配置信息
 	clusterConfigSectet.Annotations = make(map[string]string)
-	clusterConfigSectet.Annotations["alias"] = clusterConfig.Alias
-	clusterConfigSectet.Annotations["location"] = clusterConfig.Location
+	clusterConfigSectet.Annotations = utils.Struct2Map(ClusterStatus)
 	// 保存kubeconfig
 	clusterConfigSectet.StringData = make(map[string]string)
 	clusterConfigSectet.StringData["kubeconfig"] = clusterConfig.Kubeconfig
 	// 创建 secret
-	_, err := config.InClusterClientSet.CoreV1().Secrets(config.MetadataNamespace).Create(context.TODO(), &clusterConfigSectet, metav1.CreateOptions{})
+	_, err = config.InClusterClientSet.CoreV1().Secrets(config.MetadataNamespace).Create(context.TODO(), &clusterConfigSectet, metav1.CreateOptions{})
 	if err != nil {
 		logs.Error(map[string]any{"集群别名": clusterConfig.Alias, "集群ID": clusterConfig.Id}, "集群添加失败")
 		msg := "集群添加失败:" + err.Error()
