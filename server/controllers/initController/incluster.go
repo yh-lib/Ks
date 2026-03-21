@@ -2,6 +2,7 @@ package initcontroller
 
 import (
 	"context"
+	"server/config"
 	"server/utils/logs"
 
 	corev1 "k8s.io/api/core/v1"
@@ -28,8 +29,10 @@ func metaDataInit() {
 		logs.Error(map[string]any{"Error": err.Error()}, "客户端工具 clientSet 创建失败")
 		panic(err.Error())
 	}
+	// incluster集群管理客户端
+	config.InClusterClientSet = clientset
 	// step3 创建元数据 nameSpace
-	newNamespace.Name = "kc"
+	newNamespace.Name = config.MetadataNamespace
 	// 判断 nameSpace 是否已存在
 	_, err = clientset.CoreV1().Namespaces().Get(context.TODO(), newNamespace.Name, metav1.GetOptions{})
 	if err != nil {

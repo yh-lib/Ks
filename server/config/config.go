@@ -8,6 +8,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"k8s.io/client-go/kubernetes"
 )
 
 // 配置参数
@@ -25,7 +26,8 @@ var (
 	Username   string
 	Password   string
 	// inCluster相关配置
-	MetadataNamespace string // 元数据存储的 namespace
+	MetadataNamespace  string // 元数据存储的 namespace
+	InClusterClientSet *kubernetes.Clientset
 )
 
 // 规范返回给前端的数据
@@ -75,13 +77,13 @@ func initLogConfig(logLevel string) {
 func init() {
 	logs.Info(nil, "开始加载程序配置...")
 	// 配置环境变量默认值
-	viper.SetDefault("LOG_LEVEL", "Debug")                           // 日志输出级别
-	viper.SetDefault("PORT", ":8080")                                // 程序监听端口
-	viper.SetDefault("JWT_SIGN_KEY", "加密用的SECRET")                   // 获取jwt加密的secret
-	viper.SetDefault("JWT_EXPIRE_TIME", 120)                         // 获取jwt过期时间
-	viper.SetDefault("USERNAME", "E3AFED0047B08059D0FADA10F400C1E5") // 默认用户名：Admin	通过MD5加密
-	viper.SetDefault("PASSWORD", "E64B78FC3BC91BCBC7DC232BA8EC59E0") // 默认密码：Admin123	通过MD5加密
-	viper.SetDefault("METADATA_NAMESPACE", "kubeCtrl")
+	viper.SetDefault("LOG_LEVEL", "Debug")         // 日志输出级别
+	viper.SetDefault("PORT", ":8080")              // 程序监听端口
+	viper.SetDefault("JWT_SIGN_KEY", "加密用的SECRET") // 获取jwt加密的secret
+	viper.SetDefault("JWT_EXPIRE_TIME", 120)       // 获取jwt过期时间
+	viper.SetDefault("USERNAME", "Admin")          // 默认用户名：Admin	通过MD5加密
+	viper.SetDefault("PASSWORD", "Admin123")       // 默认密码：Admin123	通过MD5加密
+	viper.SetDefault("METADATA_NAMESPACE", "kc")
 	// 绑定环境变量到配置
 	viper.AutomaticEnv()
 	// 获取环境变量值并绑定到程序变量
