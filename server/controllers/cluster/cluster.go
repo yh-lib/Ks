@@ -14,21 +14,21 @@ import (
 
 // 定义一个结构体，用于描述创建集群所用的配置信息
 type ClusterInfo struct {
-	Id       string `json:"id" binding:"required"`
-	Alias    string `json:"alias" binding:"required"`
-	Location string `json:"location" binding:"required"`
+	Id       string `json:"clusterId" binding:"required"`
+	Alias    string `json:"clusterAlias" binding:"required"`
+	Location string `json:"clusterLocation" binding:"required"`
 }
 
 type ClusterConfig struct {
 	ClusterInfo
-	Kubeconfig string `json:"kubeconfig" binding:"required"`
+	Kubeconfig string `json:"clusterKubeconfig" binding:"required"`
 }
 
 // 定义一个结构体，用于描述集群的状态
 type ClusterStatus struct {
 	ClusterInfo
-	Version string `json:"version"`
-	Status  string `json:"status"`
+	Version string `json:"clusterVersion"`
+	Status  string `json:"clusterStatus"`
 }
 
 // 定义一个结构体的方法，用于判断集群的状态

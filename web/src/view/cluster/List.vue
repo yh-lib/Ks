@@ -36,11 +36,13 @@ const refreshList = () =>{
 const getList = () =>{
     loading.value = true
     getListHandler().then((response)=>{
-        if (response.status === 200) {
-            data.tableData = response.data.data; // 更新 tableData
+        if (response.data.status === 200) {
+             
+            data.tableData = response.data.data.items; // 更新 tableData
+            console.log('获取列表成功:', response.data.data.items);
             loading.value = false
         } else {
-            console.error('获取列表失败:', response.msg);
+            console.error('获取列表失败:', response.data.message);
         }
     })
 }
@@ -149,13 +151,19 @@ const loading = ref(false)
         </template>
         <!-- none -->
         <el-table :data="filterTableData" style="width: 100%"  height="70vh" v-loading="loading">
-            <el-table-column :label="tableTtile.f1.label"  :prop="tableTtile.f1.prop" />
-            <el-table-column :label="tableTtile.f2.label"   :prop="tableTtile.f2.prop" />
+            <el-table-column :label="tableTtile.f1.label">
+                <template #default="scope">
+                    <router-link :to="{path: '/api/cluster/detail', query: {'clusterId': scope.row.clusterId}}">
+                        {{ scope.row.clusterId}}
+                    </router-link>
+                </template>
+            </el-table-column>
+            <el-table-column :label="tableTtile.f2.label" :prop="tableTtile.f2.prop" />
             <el-table-column :label="tableTtile.f3.label" :prop="tableTtile.f3.prop" />
             <el-table-column :label="tableTtile.f4.label" :prop="tableTtile.f4.prop" />
             <el-table-column :label="tableTtile.f5.label" prop="" >
                 <template #default="scope">
-                    <el-icon v-if="scope.row.clusterStatus == 'true'" color="green"><CircleCheck /></el-icon>  
+                    <el-icon v-if="scope.row.clusterStatus == 'Active'" color="green"><CircleCheck /></el-icon>  
                     <el-icon v-else color="red"><CircleClose /></el-icon>  
                 </template>
             </el-table-column>
@@ -166,7 +174,7 @@ const loading = ref(false)
                 </template>             
                 <template #default="scope">
                     <!-- update_1 触发编辑操作 -->
-                    <el-button :disabled="scope.row.clusterStatus != 'true'" size="small" @click="updateItem(scope.row)">
+                    <el-button size="small" @click="updateItem(scope.row)">
                         编辑
                     </el-button>
                     <!-- delete_1 触发删除动作 -->

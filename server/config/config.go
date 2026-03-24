@@ -80,7 +80,7 @@ func init() {
 	viper.SetDefault("LOG_LEVEL", "debug")         // 日志输出级别
 	viper.SetDefault("PORT", ":8080")              // 程序监听端口
 	viper.SetDefault("JWT_SIGN_KEY", "加密用的SECRET") // 获取jwt加密的secret
-	viper.SetDefault("JWT_EXPIRE_TIME", 1)         // 获取jwt过期时间
+	viper.SetDefault("JWT_EXPIRE_TIME", 120)       // 获取jwt过期时间
 	viper.SetDefault("USERNAME", "Admin")          // 默认用户名：Admin	通过MD5加密
 	viper.SetDefault("PASSWORD", "Admin123")       // 默认密码：Admin123	通过MD5加密
 	viper.SetDefault("METADATA_NAMESPACE", "kc")

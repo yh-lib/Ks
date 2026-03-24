@@ -3,7 +3,9 @@ package cluster
 import (
 	"context"
 	"server/config"
+	cnode "server/controllers/node"
 	"server/utils/logs"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -24,6 +26,8 @@ func List(c *gin.Context) {
 		returnData.Message = "获取集群列表成功"
 		var clusterItem []map[string]string
 		for _, v := range clusterList.Items {
+			// 获取节点数量
+			v.Annotations["clusterSize"] = strconv.Itoa(cnode.NodesNum())
 			clusterItem = append(clusterItem, v.Annotations)
 		}
 		returnData.Data["items"] = clusterItem

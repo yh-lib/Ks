@@ -50,9 +50,6 @@ axios.interceptors.response.use(
             // 跳转到登录页
             router.currentRoute.value.path != '/login' && router.push('/login')
             return Promise.reject(new Error(response.data.message));
-        } else {
-            // 处理其他错误状态码 // 修改：新增处理其他错误状态码的情况
-            return Promise.reject(new Error(response.data.message || 'An error occurred'));
         }
     },
     (error) => {

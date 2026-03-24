@@ -99,7 +99,7 @@ const emit = defineEmits(['refresh'])
         <!-- 左半部分 -->
         <div>
             <el-form-item label="集群ID"  prop="clusterId">
-                <el-input v-model="data.itemForm.clusterId" autocomplete="off" />
+                <el-input v-model="data.itemForm.clusterId" autocomplete="off" :readonly="props.subMethod == 'update'"/>
             </el-form-item>
             <el-form-item label="集群名称"  prop="clusterAlias">
                 <el-input v-model="data.itemForm.clusterAlias" autocomplete="off" />

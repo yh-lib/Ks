@@ -34,10 +34,6 @@ func JwtAuth(c *gin.Context) {
 		c.JSON(200, returnData)
 		c.Abort()
 		return
-	} else {
-		returnData.Status = 200
-		returnData.Message = "token 验证通过。"
-		c.JSON(200, returnData)
 	}
 	// 将 claims 赋值到 *gin.Context 中
 	c.Set("claims", claims)
