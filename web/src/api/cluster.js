@@ -7,8 +7,8 @@ export const getClusterListHandler = () => {
 }
 
 // 删除集群
-export const deleteClusterHandler = (id) => {
-    return request(API_CONFIG.clusterDeleteApi, {id}, 'post', 10000)
+export const deleteClusterHandler = (clusterId) => {
+    return request(API_CONFIG.clusterDeleteApi, { clusterId }, 'get', 10000)
 }
 
 // 添加集群
