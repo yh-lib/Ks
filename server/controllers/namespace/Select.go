@@ -14,7 +14,7 @@ func Get(c *gin.Context) {
 	logs.Info(nil, "详情逻辑")
 	returnData := config.ReturnData{}
 	returnData.Data = map[string]any{}
-	clientSet, basicInfo, err := controllers.BasicInit(c)
+	clientSet, basicInfo, err := controllers.BasicInit(c, nil)
 	if err != nil {
 		logs.Error(map[string]any{"Error": err}, "clientSet 初始化失败")
 	}
@@ -35,7 +35,7 @@ func List(c *gin.Context) {
 	logs.Info(nil, "列表逻辑")
 	returnData := config.ReturnData{}
 	returnData.Data = map[string]any{}
-	clientSet, _, err := controllers.BasicInit(c)
+	clientSet, _, err := controllers.BasicInit(c, nil)
 	if err != nil {
 		logs.Error(map[string]any{"Error": err}, "clientSet 初始化失败")
 	}

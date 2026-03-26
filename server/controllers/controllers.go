@@ -14,11 +14,13 @@ import (
 type BasicInfo struct {
 	ClusterId string `json:"clusterId" form:"clusterId"`
 	NameSpace string `json:"nameSpace" form:"nameSpace"`
+	Item      any    `json:"item"`
 }
 
-func BasicInit(c *gin.Context) (clientSet *kubernetes.Clientset, basicInfo BasicInfo, err error) {
+func BasicInit(c *gin.Context, item any) (clientSet *kubernetes.Clientset, basicInfo BasicInfo, err error) {
 	// 绑定前端传递的数据到后端变量中
 	basicInfo = BasicInfo{}
+	basicInfo.Item = item
 	requestMethod := c.Request.Method
 	switch requestMethod {
 	case "GET":

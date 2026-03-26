@@ -14,7 +14,7 @@ import (
 func Create(c *gin.Context) {
 	logs.Info(nil, "创建逻辑")
 	returnData := config.ReturnData{}
-	clientSet, basicInfo, err := controllers.BasicInit(c)
+	clientSet, basicInfo, err := controllers.BasicInit(c, nil)
 	if err != nil {
 		logs.Error(map[string]any{"Error": err}, "clientSet 初始化失败")
 	}
