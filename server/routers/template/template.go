@@ -7,7 +7,7 @@ import (
 )
 
 func create(templateGroup *gin.RouterGroup) {
-	templateGroup.POST("/add", template.Create)
+	templateGroup.POST("/create", template.Create)
 }
 func delete(templateGroup *gin.RouterGroup) {
 	templateGroup.GET("/delete", template.Delete)
