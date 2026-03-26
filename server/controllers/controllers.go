@@ -12,9 +12,10 @@ import (
 )
 
 type BasicInfo struct {
-	ClusterId string `json:"clusterId" form:"clusterId"`
-	NameSpace string `json:"nameSpace" form:"nameSpace"`
-	Item      any    `json:"item"`
+	ClusterId  string   `json:"clusterId" form:"clusterId"`
+	NameSpace  string   `json:"nameSpace" form:"nameSpace"`
+	Item       any      `json:"item"`
+	DeleteList []string `json:"deleteList"`
 }
 
 func BasicInit(c *gin.Context, item any) (clientSet *kubernetes.Clientset, basicInfo BasicInfo, err error) {
