@@ -3,7 +3,7 @@ package cluster
 import (
 	"context"
 	"server/config"
-	cnode "server/controllers/node"
+	"server/controllers/node"
 	"server/utils/logs"
 	"strconv"
 
@@ -27,7 +27,7 @@ func List(c *gin.Context) {
 		var clusterItem []map[string]string
 		for _, v := range clusterList.Items {
 			// 获取节点数量
-			v.Annotations["clusterSize"] = strconv.Itoa(cnode.NodesNum())
+			v.Annotations["clusterSize"] = strconv.Itoa(node.NodesNum())
 			clusterItem = append(clusterItem, v.Annotations)
 		}
 		returnData.Data["items"] = clusterItem
