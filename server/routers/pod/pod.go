@@ -12,6 +12,9 @@ func create(podGroup *gin.RouterGroup) {
 func delete(podGroup *gin.RouterGroup) {
 	podGroup.POST("/delete", pod.Delete)
 }
+func deleteList(podGroup *gin.RouterGroup) {
+	podGroup.POST("/deleteList", pod.DeleteList)
+}
 func update(podGroup *gin.RouterGroup) {
 	podGroup.POST("/update", pod.Update)
 }
@@ -27,6 +30,7 @@ func RegisterSubRouter(g *gin.RouterGroup) {
 	podGroup := g.Group("pod")
 	create(podGroup)
 	delete(podGroup)
+	deleteList(podGroup)
 	update(podGroup)
 	get(podGroup)
 	list(podGroup)

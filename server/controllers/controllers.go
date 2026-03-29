@@ -17,6 +17,7 @@ type BasicInfo struct {
 	ClusterId  string   `json:"clusterId" form:"clusterId"`
 	NameSpace  string   `json:"nameSpace" form:"nameSpace"`
 	Name       string   `json:"name" form:"name"`
+	NameList   []string `json:"nameList" form:"nameList"`
 	Item       any      `json:"item"`
 	DeleteList []string `json:"deleteList"`
 }
@@ -46,7 +47,7 @@ func NewInfo(c *gin.Context, info *Info) (kubeconfig string) {
 	default:
 		err = errors.New("不支持的请求类型")
 	}
-	logs.Debug(map[string]any{"Info": info}, "数据绑定结果")
+	logs.Debug(map[string]any{"Info": info}, "绑定前端传递的数据到后端info变量中的结果")
 	if err != nil {
 		msg := "请求数据绑定后端失败: " + err.Error()
 		returnData.Message = msg
@@ -104,61 +105,105 @@ func BasicInit(c *gin.Context, item any) (clientSet *kubernetes.Clientset, basic
 	return clientSet, basicInfo, nil
 }
 
-func newReturnData(c *gin.Context, err error, returndata config.ReturnData, msg string) {
-	logs.Error(map[string]any{"ERROR": err.Error()}, msg)
+func errorReturnData(c *gin.Context, returndata config.ReturnData, err error, info Info, resourceType string, msg string) {
+	logs.Error(map[string]any{"ERROR": err.Error(), "clusterId": info.ClusterId, "namespace": info.NameSpace, "resourceType": resourceType, "resourceName": info.Name}, msg)
 	returndata.Status = 200
 	returndata.Message = msg + ": " + err.Error()
 	c.JSON(200, returndata)
 }
 
+func successReturnData(c *gin.Context, returndata config.ReturnData, info Info, resourceType string, msg string) {
+	logs.Debug(map[string]any{"clusterId": info.ClusterId, "namespace": info.NameSpace, "resourceType": resourceType, "resourceName": info.Name}, msg)
+	returndata.Status = 200
+	returndata.Message = msg
+	c.JSON(200, returndata)
+}
+
+// 入口函数
 func KubectlFunc(c *gin.Context, resourceType string, opMethod string) {
-	logs.Debug(nil, resourceType+"列表逻辑")
+	logs.Debug(nil, "操作资源类型: "+resourceType)
 	// 定义变量
 	var (
-		kubeUtilser kubeutils.KubeUtilser
-		returndata  config.ReturnData
-		info        Info
-		item        corev1.Node
+		kubeUtilser        kubeutils.KubeUtilser
+		returndata         config.ReturnData
+		info               Info
+		gracePeriodSeconds int64
+		// 资源类型
+		node corev1.Node
+		pod  corev1.Pod
 	)
-	// 初始化返回数据
 	returndata.Data = map[string]any{}
-	info.Item = &item
+	// 初始化 Item 类型
+	switch resourceType {
+	case "node":
+		info.Item = &node
+	case "pod":
+		info.Item = &pod
+	default:
+		logs.Error(nil, "不支持该资源类型")
+		return
+	}
+	// 绑定前端传递的数据到后端info变量中
 	kubeconfig := NewInfo(c, &info)
 	// 匹配资源类型
 	switch resourceType {
 	case "node":
-		kubeUtilser = kubeutils.NewNode(kubeconfig, &item)
+		kubeUtilser = kubeutils.NewNode(kubeconfig, &node)
+	case "pod":
+		kubeUtilser = kubeutils.NewPod(kubeconfig, &pod)
 	default:
 		logs.Error(nil, "不支持该资源类型")
 		return
 	}
 	// 匹配操作方法
 	switch opMethod {
+	case "create":
+		err := kubeUtilser.Create(info.NameSpace)
+		if err != nil {
+			errorReturnData(c, returndata, err, info, resourceType, "创建失败")
+			return
+		}
+	case "delete":
+		if info.Force {
+			gracePeriodSeconds = 1
+		}
+		err := kubeUtilser.Delete(info.NameSpace, info.Name, &gracePeriodSeconds)
+		if err != nil {
+			errorReturnData(c, returndata, err, info, resourceType, "删除失败")
+			return
+		}
+	case "deleteList":
+		if info.Force {
+			gracePeriodSeconds = 1
+		}
+		err := kubeUtilser.DeleteList(info.NameSpace, info.NameList, &gracePeriodSeconds)
+		if err != nil {
+			errorReturnData(c, returndata, err, info, resourceType, "删除失败")
+			return
+		}
 	case "list":
 		items, err := kubeUtilser.List("", info.LabelSelector, info.FieldSelector)
 		if err != nil {
-			newReturnData(c, err, returndata, "获取列表失败")
+			errorReturnData(c, returndata, err, info, resourceType, "获取列表失败")
 			return
 		}
 		returndata.Data["items"] = items
 	case "get":
 		item, err := kubeUtilser.Get("", info.Name)
 		if err != nil {
-			newReturnData(c, err, returndata, "获取详情失败")
+			errorReturnData(c, returndata, err, info, resourceType, "获取详情失败")
 			return
 		}
 		returndata.Data["items"] = item
 	case "update":
 		err := kubeUtilser.Update(info.NameSpace)
 		if err != nil {
-			newReturnData(c, err, returndata, "更新失败2")
+			errorReturnData(c, returndata, err, info, resourceType, "更新失败")
 			return
 		}
 	default:
 		logs.Error(nil, "不支持该操作方法")
 		return
 	}
-	returndata.Status = 200
-	returndata.Message = "操作成功"
-	c.JSON(200, returndata)
+	successReturnData(c, returndata, info, resourceType, "操作成功")
 }

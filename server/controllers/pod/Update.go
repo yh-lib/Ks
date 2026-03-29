@@ -1,11 +1,11 @@
 package pod
 
 import (
-	"server/utils/logs"
+	"server/controllers"
 
 	"github.com/gin-gonic/gin"
 )
 
 func Update(c *gin.Context) {
-	logs.Info(nil, "更新逻辑")
+	controllers.KubectlFunc(c, "pod", "update")
 }
