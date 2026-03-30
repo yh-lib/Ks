@@ -2,8 +2,8 @@ import { API_CONFIG } from "../config/index.js"
 import request from "./axiosEncap.js"
 
 // 获取集群列表
-export const getnodeListHandler = () => {
-    return request(API_CONFIG.nodeListApi, { clusterId: "in-cluster" }, 'get', 10000)
+export const getnodeListHandler = (clusterId) => {
+    return request(API_CONFIG.nodeListApi, { clusterId: clusterId }, 'get', 10000)
 }
 
 // 获取集群详情

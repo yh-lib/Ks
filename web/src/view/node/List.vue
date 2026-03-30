@@ -8,8 +8,6 @@ import { ElSelect } from 'element-plus'
 // 需要的数据变量
 const data = reactive({
   items: [],
-  clusterList: [],
-  clusterId: "",
   editItem: {},
   editNodeName: "",
   detailItem: {},
@@ -17,78 +15,49 @@ const data = reactive({
   createName: "",
   // 集群选择器
   clusterOptions:[],
-  value: "",
+  curClusterId: "",
+  defaultClusterId: "in-cluster",
 })
 
-// 加载前
+// 子组件加载前自动获取数据
 onBeforeMount(async () => {
-    console.log("挂载前：：：：：：：：")
     // 获取集群列表
-    await getClusterList()
-    // 获取集群选择器菜单
-    data.clusterList.forEach(item => {
-        console.log("看这里:::::::::", item)
-    })
+    await getclusterOptions()
+    // 获取基础设施集群的Node列表
+    data.curClusterId=data.defaultClusterId
+    getList();
 })
 
-
-
-const options = [
-  {
-    id: 'Option1',
-    label: 'Option1',
-  },
-  {
-    id: 'Option2',
-    label: 'Option2',
-    disabled: true,
-  },
-  {
-    id: 'Option3',
-    label: 'Option3',
-  },
-  {
-    id: 'Option4',
-    label: 'Option4',
-    disabled: true,
-  },
-  {
-    id: 'Option5',
-    label: 'Option5',
-  },
-]
-
-
+// 获取当前集群Node列表
+const getList = () =>{
+    loading.value = true
+    getListHandler(data.curClusterId).then((res)=>{
+        data.items = res.data.data.items;
+        loading.value = false
+    })
+}
 // 获取集群列表
-const getClusterList = async ()=>{
+const getclusterOptions = async ()=>{
     await getClusterListHandler().then((res)=>{
         if (res.data.status === 200) {
-            data.clusterList = res.data.data.items;
-            console.log('成功获取集群列表:::', data.clusterList);
+            data.clusterOptions = res.data.data.items;
+            console.log('获取集群列表:::', data.clusterOptions);
         } else {
             console.error('获取集群列表失败:', res.data.message);
         }
     })
 }
 
+
+
+
+
 const getNodeList = ()=>{
     loading.value = true
 
 }
 
-// add_8 获取当前列表
-const getList = () =>{
-    loading.value = true
-    getListHandler().then((response)=>{
-        if (response.data.status === 200) {
-            data.items = response.data.data.items; // 更新 tableData
-            console.log('获取列表成功:', response.data.data.items);
-            loading.value = false
-        } else {
-            console.error('获取列表失败:', response.data.message);
-        }
-    })
-}
+
 
 
 // 样式
@@ -139,10 +108,7 @@ const updateItem = (row) => {
 
 // ++++++查
 
-// select_1 子组件加载时自动获取列表
-onBeforeMount(() => {
-    getList();
-})
+
 // select_2 搜索功能
 const search = ref('')
 const filterTableData = computed(() =>
@@ -181,9 +147,9 @@ const loading = ref(false)
                     <span style="font-size: 24px;">{{ titleName }}</span>
                 </div>
                 <div>
-                    <el-select v-model="data.value" placeholder="选择集群" style="width: 240px;margin-right: 10px;">
+                    <el-select v-model="data.curClusterId" placeholder="选择集群" style="width: 240px;margin-right: 10px;" @change="getList(data.curClusterId)">
                         <el-option
-                            v-for="item in data.clusterList"
+                            v-for="item in data.clusterOptions"
                             :key="item.clusterId"
                             :label="item.clusterId"
                             :value="item.clusterId"

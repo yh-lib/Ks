@@ -93,7 +93,7 @@ func addOrUpdate(c *gin.Context, method string) {
 	var clusterConfigSectet corev1.Secret
 	clusterConfigSectet.Name = clusterConfig.Id
 	clusterConfigSectet.Labels = make(map[string]string)
-	clusterConfigSectet.Labels["kubeeasy.com/cluster.metadata"] = "true"
+	clusterConfigSectet.Labels["author"] = "yaohui.li"
 	// 添加注释，保存集群的配置信息
 	clusterConfigSectet.Annotations = make(map[string]string)
 	clusterConfigSectet.Annotations = utils.Struct2Map(ClusterStatus)
@@ -125,7 +125,7 @@ func addOrUpdate(c *gin.Context, method string) {
 	}
 	// 更新存放kubeconfig的变量
 	clusterId := secret.Name
-	kubeConfigStr := string(secret.Data[clusterId])
+	kubeConfigStr := string(secret.Data["kubeconfig"])
 	config.ClusterKubeconfig[clusterId] = kubeConfigStr
 
 	logs.Info(map[string]any{"集群别名": clusterConfig.Alias, "集群ID": clusterConfig.Id}, "集群"+arg+"成功")
