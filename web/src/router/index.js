@@ -3,23 +3,15 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import { CONFIG } from "../config";
 import { userRoutes } from "./user";
 import { clusterRoutes } from "./cluster.js";
+import { nodeRoutes } from "./node.js";
 
 // 路由配置
 const routes = [
-    // 首页路由
-    {
-        path: "/",
-        redirect: '/cluster/dashboard',
-    },
-    // 登录路由
-    {
-        path: "/login",
-        component: () => import('../view/Login.vue'),
-    },
-    // 用户管理路由
+    { path: "/", redirect: '/cluster/dashboard' },
+    { path: "/login", component: () => import('../view/Login.vue') },
     userRoutes,
-    // 集群概览路由
-    clusterRoutes
+    clusterRoutes,
+    nodeRoutes
 ]
 
 // 实例化路由

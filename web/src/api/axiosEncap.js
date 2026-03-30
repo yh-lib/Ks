@@ -37,6 +37,7 @@ axios.interceptors.response.use(
     (response) => {
         // 2xx 范围内的状态码都会触发该函数。
         // 对响应数据做点什么
+        console.log("Response:::", response)
         if (response.data.status == 200) {
             return response;
         } else if (response.data.status == 401) {

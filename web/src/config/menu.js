@@ -17,7 +17,7 @@ export const MENU_CONFIG = [
             },
             {
                 title: '节点列表',
-                index: '/cluster/nodes',
+                index: '/node/list',
                 icon: 'Grid'
             },
             {

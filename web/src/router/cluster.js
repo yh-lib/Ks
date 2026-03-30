@@ -12,12 +12,8 @@ export const clusterRoutes = {
             component: () => import('../view/cluster/List.vue'),
         },
         {
-            path: "nodes",
-            component: () => import('../view/cluster/Nodes.vue'),
-        },
-        {
             path: "events",
             component: () => import('../view/cluster/Events.vue'),
-        },                        
+        },
     ]
 }
