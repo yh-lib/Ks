@@ -7,8 +7,8 @@ export const getnodeListHandler = (clusterId) => {
 }
 
 // 获取集群详情
-export const getnodeHandler = (nodeId) => {
-    return request(API_CONFIG.nodeGetApi, { nodeId }, 'get', 10000)
+export const getnodeHandler = (clusterId, name) => {
+    return request(API_CONFIG.nodeGetApi, { clusterId, name }, 'get', 10000)
 }
 
 // 删除集群

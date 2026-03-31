@@ -201,11 +201,11 @@ const loading = ref(false)
                 </template>
             </el-table-column>
         </el-table>
-        <!-- add_3:动态渲染表单抬头/add_5:打开表单-->
+        <!-- add_3:动态渲染表单抬头/add_5:打开表单-->s
         <el-dialog 
             v-model="opDialog"
             :title="method == 'create' ? '添加集群' : '更新集群'"
-            width="50vw"
+            width="1000px"
             @close="closeDialog"
             destroy-on-close
         >

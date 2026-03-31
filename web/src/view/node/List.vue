@@ -3,35 +3,51 @@ import { computed, reactive, ref, onBeforeMount  } from 'vue'
 import { getnodeListHandler as getListHandler,getnodeHandler as getHandler } from '../../api/node.js'
 import { getClusterListHandler} from '../../api/cluster.js'
 import { ElSelect } from 'element-plus'
+import { Loading } from '@element-plus/icons-vue'
+import { obj2list } from '../../utils/typeConv/type.conv.js'
 
 // 需要的数据变量
 const data = reactive({
-    loading:false,  // 默认关闭加载图标
-    items: [],  // 后端返回的元数据
+    loading: false,  // 默认关闭加载图标
+    items: [],  // 后端返回的 list
+    item: {}, // 后端返回的 obj
     search: "", // 接收 header 搜索框中数据
+    curHostName: "",
     // 集群选择器
     clusterOptions:[],  // 集群选择 options
     curClusterId: "",   // 当前选择的集群id
     defaultClusterId: "in-cluster", // 默认选择的集群id
+    // 表格
+    opDialog: false,    // 配置、主机名 对话框
+    nodeLabels: [],          // 后端返回的label
 })
 
-
-
-// 子组件加载前自动获取数据
+// // // 子组件加载前自动获取数据
 onBeforeMount(async () => {
     await getclusterOptions()   // 获取集群列表
     data.curClusterId=data.defaultClusterId // 获取基础设施集群的Node列表
     getList();
 })
 
-// 关闭dialog时刷新用户列表
-const closeDialog = () =>{
-    getList()
+// 获取节点标签
+const getLabel = () => {
+    data.nodeLabels = obj2list(data.item.metadata.labels)
+    console.log("获取节点标签:",data.nodeLabels)
 }
 
-// 更新node配置后，刷新node列表
-const refreshList = () =>{
-    opDialog.value = false
+// 节点配置
+const updateItem = (row) => {
+    data.curHostName = row.metadata.name
+    // 获取节点详情s
+    getHandler(data.curClusterId,data.curHostName).then((res)=>{
+        console.log("获取节点详情:",res)
+        data.item=res.data.data.items
+        data.opDialog = true
+    }) 
+}
+
+// 关闭dialog时刷新用户列表
+const closeDialog = () =>{
     getList()
 }
 
@@ -77,7 +93,7 @@ const getclusterOptions = async ()=>{
 <template>
     <!-- card -->
     <el-card>
-        <!-- header -->
+        <!-- card header -->
         <template #header>
             <div class="card-header">
                 <div>
@@ -97,11 +113,11 @@ const getclusterOptions = async ()=>{
                 </div>
             </div>
         </template>
-        <!-- middle -->
+        <!-- card middle -->
         <el-table :data="filterTableData" style="width: 100%;"  height="70vh" v-loading="data.loading">
-            <el-table-column label="主机名">
+            <el-table-column label="主机名" prop="hostName">
                 <template #default="scope">
-                    <el-button link type="primary" @click="edit(scope.row)">
+                    <el-button link type="primary" @click="updateItem(scope.row)">
                         {{ scope.row.status.addresses[1].address}} 
                     </el-button>                        
                 </template>
@@ -120,7 +136,7 @@ const getclusterOptions = async ()=>{
             </el-table-column>
             <el-table-column label="角色" prop="role" >
                 <template #default="scope">
-                    <el-button link type="primary" @click="edit(scope.row)">
+                    <el-button link type="primary">
                         {{ scope.row.status.addresses[1].address}} 
                     </el-button>                        
                 </template>                  
@@ -143,11 +159,52 @@ const getclusterOptions = async ()=>{
             </el-table-column>
             <el-table-column label="操作" prop="edit">
                 <template #default="scope">
-                    <el-button link type="primary" @click="edit(scope.row)">配置</el-button>
+                    <el-button link type="primary" @click="updateItem(scope.row)">配置</el-button>
                 </template>
             </el-table-column>
-        </el-table>  
+        </el-table>
+        <!-- dialog -->
+        <el-dialog 
+            v-model="data.opDialog"
+            width="1600px"
+            style="height: 800px;"
+            @close="closeDialog"
+            destroy-on-close
+        >
+            <!-- dialog header -->
+            <template #header>
+                <span style="font-size: 18px;">节点配置</span>
+                <div style="display: flex; justify-content: flex-start;">
+                    <el-tag type="primary" effect="plain" style="margin-right: 10px;">集群: {{ data.curClusterId || '-' }}</el-tag>
+                    <el-tag type="primary" effect="plain" style="margin-right: 10px;">节点: {{ data.item?.metadata?.name || '-' }}</el-tag>
+                </div>
+            </template>
+            <!-- dialog middle -->
+            <el-tabs v-model="nodeLabel" class="demo-tabs" @tab-click="getLabel">
+                <el-tab-pane label="详情" name="nodeDetail">
+                    User
+                </el-tab-pane>
+                <el-tab-pane label="标签" name="nodeLabel">
+                    <el-table :data="data.nodeLabels" style="width: 100%">
+                        <el-table-column prop="key" label="Key"/>
+                        <el-table-column prop="value" label="Value"/>
+                        <el-table-column>
+                            <template #header>
+                                <el-button type="primary" link style="font-size: 16px;margin-bottom: 10px;" >添加</el-button>  
+                            </template>
+                            <template #default="scope">
+                                <el-button type="danger" link style="font-size: 16px;margin-bottom: 10px;" >删除</el-button>
+                            </template>                      
+                        </el-table-column>
+                    </el-table>                        
+                </el-tab-pane>
+                <el-tab-pane label="污点" name="nodeTaint">
+                    Role
+                </el-tab-pane>
+            </el-tabs>
+        </el-dialog>          
     </el-card>
+           
 </template>
 
 <style scoped>
@@ -162,48 +219,3 @@ const getclusterOptions = async ()=>{
 
 
 
-        <!-- <el-dialog 
-            v-model="opDialog"
-            :title="method == 'create' ? '添加节点' : '更新节点'"
-            width="50vw"
-            @close="closeDialog"
-            destroy-on-close
-        > -->
-            <!-- add_6:添加节点表单 -->
-            <!-- update3 将method.value、data.itemForm赋值给子组件 -->
-            <!-- <Add :subMethod='method' :subRow="data.itemForm" @refresh="refreshList"/>
-        </el-dialog>             -->
-
-<!-- // +++++++++++++++++
-
-
-// 样式
-// const props = {
-//   value: 'id',
-//   label: 'label',
-//   options: 'options',
-//   disabled: 'disabled',
-// }
-
-//   editItem: {},
-//   editNodeName: "",
-//   detailItem: {},
-//   detailNodeName: "",
-//   createName: "",
-
-
-
-
-
-// update_2 更新
-// const updateItem = (row) => {
-//     // 获取节点详情
-//     getHandler(row.nodeId).then((response)=>{
-//         data.itemForm=response.data.data.item  
-//         // 注意下面这两步：如果放在axios外面，则赋值可能失败，因为是异步运行
-//         // 传递给操作参数给子组件
-//         method.value='update'
-//         // 打开表单弹窗
-//         opDialog.value = true
-//     }) 
-// } -->
