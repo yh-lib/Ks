@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, reactive, ref, onBeforeMount  } from 'vue'
+import { computed, reactive, ref, onBeforeMount, effect  } from 'vue'
 import { getnodeListHandler as getListHandler,getnodeHandler as getHandler } from '../../api/node.js'
 import { getClusterListHandler} from '../../api/cluster.js'
 import { ElSelect } from 'element-plus'
@@ -19,8 +19,14 @@ const data = reactive({
     defaultClusterId: "in-cluster", // 默认选择的集群id
     // 表格
     opDialog: false,    // 配置、主机名 对话框
-    nodeLabels: [],          // 后端返回的label
+    nodeLabels: [],     // 后端返回的label
     nodeTaints: [],
+    curTabName: "",
+    taintOptions:  [   // 污点选项 
+        {label: "禁止调度", value: "NoSchedule"},
+        {label: "驱逐", value: "NoExecute"},
+        {label: "尽量不调度", value: "PreferNoSchedule"}
+    ]
 })
 
 // // // 子组件加载前自动获取数据
@@ -30,19 +36,39 @@ onBeforeMount(async () => {
     getList();
 })
 
-// 获取节点角色
-const getNodeRole = computed(() => {
-    const keyList = Object.keys(data.item.metadata.labels)
-    if (keyList.length == 0) {
-        return "工作节点"
+// 获取节点角色（纯 JS 版本）
+const getNodeRole = (labels = {}) => {
+    const keyList = Object.keys(labels || {})
+    if (!keyList.length) {
+        return 'Worker'
     }
-    if (keyList.includes('node-role.kubernetes.io/control-plane') || keyList.includes('node-role.kubernetes.io/controlplane') || keyList.includes('node-role.kubernetes.io/master')) {
-        return "控制节点"
-    }
-    return "工作节点"
-})
-    
+    const controlPlaneKeys = [
+        'node-role.kubernetes.io/control-plane',
+        'node-role.kubernetes.io/controlplane',
+        'node-role.kubernetes.io/master',
+    ]
+    return controlPlaneKeys.some((key) => keyList.includes(key)) ? 'Master' : 'Worker'
+}
 
+// 添加列表项
+const addLabelItem = () => {data.nodeLabels.unshift({key:"",value:""})}
+// 添加污点项（为空时先初始化数组）
+const addTaintItem = () => {
+    if (!Array.isArray(data.nodeTaints)) {
+        data.nodeTaints = []
+    }
+    data.nodeTaints.unshift({ key: "", value: "", effect: "" })
+}
+
+// 删除列表项
+const deleteLabelItem = (index) => {
+    data.nodeLabels.splice(index,1)
+}
+// 删除污点项
+const deleteTaintItem = (index) => {
+    data.nodeTaints.splice(index,1)
+}
+    
 // 获取节点标签
 const getLabel = () => {
     // console.log("获取节点调试数据:",data.item.spec.taints)
@@ -52,12 +78,13 @@ const getLabel = () => {
 
 // 节点配置
 const updateItem = (row) => {
+    data.curTabName = 'nodeDetail'
     data.curHostName = row.metadata.name
-    data.nodeTaints = row.spec.taints
-    // 获取节点详情s
+    data.nodeTaints = Array.isArray(row.spec?.taints) ? [...row.spec.taints] : []
+    // 获取节点详情
     getHandler(data.curClusterId,data.curHostName).then((res)=>{
-        console.log("获取节点详情:",res)
         data.item=res.data.data.items
+        // console.log("获取节点污点：：：:",data.nodeTaints)
         data.opDialog = true
     }) 
 }
@@ -152,9 +179,7 @@ const getclusterOptions = async ()=>{
             </el-table-column>
             <el-table-column label="角色" prop="role" >
                 <template #default="scope">
-                    <el-button link type="primary">
-                        {{ scope.row.status.addresses[1].address}} 
-                    </el-button>                        
+                    {{ getNodeRole(scope.row.metadata?.labels || {}) }}  
                 </template>                  
             </el-table-column>
             <el-table-column label="状态" prop="status" >
@@ -183,13 +208,12 @@ const getclusterOptions = async ()=>{
         <el-dialog 
             v-model="data.opDialog"
             width="1600px"
-            style="height: 600px;"
+            style="height: 620px;"
             @close="closeDialog"
             destroy-on-close
         >
             <!-- dialog header -->
-            <template #header>
-                
+            <template #header>                
                 <div style="display: flex; justify-content: flex-start;">
                     <el-tag type="primary" effect="plain" style="margin-right: 10px;">集群: {{ data.curClusterId || '-' }}</el-tag>
                     <el-tag type="primary" effect="plain" style="margin-right: 10px;">节点: {{ data.item?.metadata?.name || '-' }}</el-tag>
@@ -197,13 +221,13 @@ const getclusterOptions = async ()=>{
                 </div>
             </template>
             <!-- dialog middle -->
-            <el-tabs v-model="nodeLabel" class="demo-tabs" @tab-click="getLabel">
+            <el-tabs v-model="data.curTabName" class="demo-tabs" @tab-click="getLabel">
                 <!-- 标签   详情 -->
                 <el-tab-pane label="详情" name="nodeDetail">
-                    <el-descriptions :column="2" size="large" border>
+                    <el-descriptions :column="2" size="large" border style="height: 440px;">
                         <el-descriptions-item label="主机名">{{ data.curHostName }}</el-descriptions-item>
                         <el-descriptions-item label="IP地址">{{ data.item.status.addresses[0].address }}</el-descriptions-item>
-                        <el-descriptions-item label="角色">{{ getNodeRole }}</el-descriptions-item>
+                        <el-descriptions-item label="角色">{{ getNodeRole(data.item?.metadata?.labels || {}) }}</el-descriptions-item>
 
                         <el-descriptions-item label="节点状态">
                             <el-tag :type="data.item.status.conditions[data.item.status.conditions.length-1].status=='True'?'success':'danger'">
@@ -222,47 +246,85 @@ const getclusterOptions = async ()=>{
                     </el-descriptions>                    
                 </el-tab-pane>
                 <!-- 标签   标签 -->
-                <el-tab-pane label="标签" name="nodeLabel">
+                <el-tab-pane label="标签" name="nodeLabel" class="no-border-input">
                     <el-table :data="data.nodeLabels" style="width: 100%; height:440px">
-                        <el-table-column prop="key" label="Key"/>
-                        <el-table-column prop="value" label="Value"/>
+                        <el-table-column prop="key" label="Key">
+                            <template #default="scope">
+                                <el-input v-model="scope.row.key" placeholder="请输入标签的Key"></el-input>
+                            </template>                        
+                        </el-table-column>
+                        <el-table-column prop="value" label="Value">
+                            <template #default="scope">
+                                <el-input v-model="scope.row.value" placeholder="请输入标签的Value"></el-input>
+                            </template> 
+                        </el-table-column>
                         <el-table-column>
                             <template #header>
-                                <el-button type="primary" link style="font-size: 16px;margin-bottom: 10px;" >添加</el-button>  
+                                <el-button type="primary" link style="font-size: 16px;margin-bottom: 10px;" @click="addLabelItem">添加</el-button>  
                             </template>
                             <template #default="scope">
-                                <el-button type="danger" link style="font-size: 16px;margin-bottom: 10px;" >删除</el-button>
+                                <el-button type="danger" link style="font-size: 16px;margin-bottom: 10px;" @click="deleteLabelItem(scope.$index)">删除</el-button>
                             </template>                      
                         </el-table-column>
                     </el-table>                        
                 </el-tab-pane>
                 <!-- 标签   污点 -->
-                <el-tab-pane label="污点" name="nodeTaint">
+                <el-tab-pane label="污点" name="nodeTaint" class="no-border-input">
                     <el-table :data="data.nodeTaints" style="width: 100%; height:440px">
-                        <el-table-column prop="key" label="Key"/>
-                        <el-table-column prop="value" label="Value"/>
-                        <el-table-column prop="Effect" label="Effect"/>
+                        <el-table-column prop="key" label="Key">
+                            <template #default="scope">
+                                <el-input v-model="scope.row.key" placeholder="请输入污点的Key"></el-input>
+                            </template> 
+                        </el-table-column>
+                        <el-table-column prop="value" label="Value">
+                            <template #default="scope">
+                                <el-input v-model="scope.row.value" placeholder="请输入污点的Value"></el-input>
+                            </template> 
+                        </el-table-column>
+                        <el-table-column prop="effect" label="Effect">
+                            <template #default="scope">
+                                <!-- <el-input v-model="scope.row.effect" placeholder="请输入污点的Effect"></el-input> -->
+                                <el-select v-model="scope.row.effect" placeholder="Select" style="width: 240px">
+                                    <el-option
+                                        v-for="item in data.taintOptions"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value"
+                                    />
+                                </el-select>                                
+                            </template> 
+                        </el-table-column>    
                         <el-table-column>
                             <template #header>
-                                <el-button type="primary" link style="font-size: 16px;margin-bottom: 10px;" >添加</el-button>  
+                                <el-button type="primary" link style="font-size: 16px;margin-bottom: 10px;" @click="addTaintItem">添加</el-button>  
                             </template>
                             <template #default="scope">
-                                <el-button type="danger" link style="font-size: 16px;margin-bottom: 10px;" >删除</el-button>
+                                <el-button type="danger" link style="font-size: 16px;margin-bottom: 10px;" @click="deleteTaintItem(scope.$index)">删除</el-button>
                             </template>                      
                         </el-table-column>
                     </el-table> 
                 </el-tab-pane>
             </el-tabs>
+            <template #footer>
+                <div style="display: flex; justify-content:center;">
+                    <el-button v-if="data.curTabName !== 'nodeDetail'" type="primary">更新</el-button>
+                </div>                
+            </template>
         </el-dialog>          
     </el-card>
            
 </template>
 
-<style scoped>
+<style lang="less" scoped>
 .card-header{
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+:deep(.no-border-input .el-input__wrapper){
+    box-shadow: none;
+    border: none;
 }
 </style>
 
