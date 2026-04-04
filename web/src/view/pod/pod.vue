@@ -22,12 +22,7 @@ const getSelectValue = (selectValue) =>{
 }
 
 // 接受子组件传递的参数
-const data = reactive({
-    items: [],
-    curClusterId: '',
-    curNsName: '',
-    search: '',
-})
+const data = reactive({})
 </script>
 
 <template>

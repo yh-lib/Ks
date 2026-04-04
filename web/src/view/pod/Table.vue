@@ -26,7 +26,11 @@ const filterTableData = computed(() =>
     (props.tableData.items || []).filter(
         (item) =>
             !props.tableData.search ||
-            item.metadata.name.toLowerCase().includes(props.tableData.search.toLowerCase())
+            item.metadata.name.toLowerCase().includes(props.tableData.search.toLowerCase()) ||
+            item.status.podIP.toLowerCase().includes(props.tableData.search.toLowerCase()) || 
+            item.status.phase.toLowerCase().includes(props.tableData.search.toLowerCase()) || 
+            item.spec.nodeName.includes(props.tableData.search.toLowerCase()) ||
+            item.status.hostIP.toLowerCase().includes(props.tableData.search.toLowerCase())
     )
 )
 </script>
