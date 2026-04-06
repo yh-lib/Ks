@@ -186,7 +186,7 @@ export const MENU_CONFIG = [
     {
         title: '系统设置',
         index: '/setting',
-        icon: 'Tools', // 工具代表系统级设置
+        icon: 'Setting', // 工具代表系统级设置
         items: [
             {
                 title: '命名空间',
@@ -194,27 +194,15 @@ export const MENU_CONFIG = [
                 icon: 'Box'
             },
             {
+                title: '用户管理',
+                index: '/setting/user',
+                icon: 'User'
+            },
+            {
                 title: '角色与权限 (RBAC)',
                 index: '/setting/rbac',
                 icon: 'UserFilled'
-            },
-            {
-                title: '集群设置',
-                index: '/setting/cluster-config',
-                icon: 'Setting'
-            }
-        ]
-    },
-    // 6. 用户管理
-    {
-        title: '用户管理',
-        index: '/user',
-        icon: 'User',
-        items: [
-            {
-                title: '查看用户',
-                index: '/user/list'
             }
         ]
     }
-];
+]
