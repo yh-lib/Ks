@@ -19,6 +19,7 @@ const emit = defineEmits(['closeDialog'])
             @close="emit('closeDialog')"
             destroy-on-close
     >
+        <slot name="header"></slot>
         <yaml-edit :code="props.itemByYaml"></yaml-edit>
     </el-dialog>
 </template>

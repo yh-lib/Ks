@@ -39,23 +39,23 @@ export const MENU_CONFIG = [
                 icon: 'Aim',
             },
             {
-                title: '部署 (Deployments)',
-                index: '/workloads/deployments',
+                title: '部署 (Deployment)',
+                index: '/workloads/deployment',
                 icon: 'Suitcase', // 火箭代表发布/部署
             },
             {
-                title: '有状态集 (StatefulSets)',
-                index: '/workloads/statefulsets',
+                title: '有状态集 (StatefulSet)',
+                index: '/workloads/statefulset',
                 icon: 'Coin', // 数据库代表有状态
             },
             {
-                title: '守护进程集 (DaemonSets)',
-                index: '/workloads/daemonsets',
+                title: '守护进程集 (DaemonSet)',
+                index: '/workloads/daemonset',
                 icon: 'Lock', // 盾牌代表守护/安全
             },
             {
                 title: '任务与定时任务',
-                index: '/workloads/jobs',
+                index: '/workloads/job',
                 icon: 'Timer', // 定时器代表任务
             }
         ]

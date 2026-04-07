@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import DialogByYaml from '../components/DialogByYaml.vue'
 import { obj2yaml } from '../../utils/typeConv/type.conv.js'
+import DialogHeaderLabel from '../components/DialogHeaderLabel.vue'
 
 const emit = defineEmits(['deleteItem'])
 
@@ -75,9 +76,11 @@ const filterTableData = computed(() =>
             item.status.hostIP.toLowerCase().includes(props.tableData.search.toLowerCase())
     )
 )
+const curItem = ref('')
 const itemByYaml = ref('')
 const itemDetailDialog = ref(false)
 const getItem = (row) => {
+    curItem.value = row
     itemByYaml.value = obj2yaml(row)
     itemDetailDialog.value = true
 }
@@ -122,5 +125,15 @@ const getItem = (row) => {
         :dialogVisible="itemDetailDialog"
         @closeDialog="itemDetailDialog=false"
         :item-by-yaml="itemByYaml"
-    />
+    >
+        <template #header>
+            <DialogHeaderLabel 
+                :cur-cluster-id="props.tableData.curClusterId"
+                :cur-ns-name="curItem.metadata.namespace"
+                :cur-resource-name="curItem.metadata.name"
+                :cur-node-name="curItem.spec.nodeName"
+                cur-resource-kind="Pod"
+            />
+        </template>
+    </DialogByYaml>
 </template> 
