@@ -134,6 +134,7 @@ func KubectlFunc(c *gin.Context, resourceType string, opMethod string) {
 		namespace  corev1.Namespace
 		pod        corev1.Pod
 		deployment appsv1.Deployment
+		secret     corev1.Secret
 	)
 	returndata.Data = map[string]any{}
 	// 初始化 Item 类型
@@ -146,6 +147,8 @@ func KubectlFunc(c *gin.Context, resourceType string, opMethod string) {
 		info.Item = &pod
 	case "deployment":
 		info.Item = &deployment
+	case "secret":
+		info.Item = &secret
 	default:
 		logs.Error(nil, "不支持该资源类型")
 		return
@@ -162,6 +165,8 @@ func KubectlFunc(c *gin.Context, resourceType string, opMethod string) {
 		kubeUtilser = kubeutils.NewPod(kubeconfig, &pod)
 	case "deployment":
 		kubeUtilser = kubeutils.NewDeployment(kubeconfig, &deployment)
+	case "secret":
+		kubeUtilser = kubeutils.NewSecret(kubeconfig, &secret)
 	default:
 		logs.Error(nil, "不支持该资源类型")
 		return
