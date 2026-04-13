@@ -76,9 +76,9 @@ const createItemDialogVisible = ref(false)
      </ElCard>
 
          <!-- 创建 item 按钮 -->
-    <DialogByCreateItem 
-        :open-dialog="createItemDialogVisible" 
+    <DialogByCreateItem
+        v-if="createItemDialogVisible"
+        :open-dialog="createItemDialogVisible"
         @close-dialog="createItemDialogVisible=false"
-    >
-    </DialogByCreateItem>
+    />
 </template>    
