@@ -4,7 +4,7 @@ import Table from './Table.vue';
 import { reactive, ref } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getdeploymentListHandler,deletedeploymentHandler } from '../../api/deployment'
-import DialogByCreateItem from '../components/DialogByCreateItem.vue'
+import DialogOfItem from '../components/workLoads/DialogOfItem.vue'
 
 // 删除 deployment
 const deleteItem = (row) => {
@@ -18,7 +18,7 @@ const deleteItem = (row) => {
         }
     )
     .then(() => {
-        deletedeploymentHandler(data.curClusterId,data.curNsName,row.metadata.name).then((res)=>{
+        deletedeploymentHandler(data.clusterId,data.nameSpace,row.metadata.name).then((res)=>{
             if (res.data.status == 200) {
                 ElMessage({
                     type: 'success',
@@ -35,11 +35,11 @@ const deleteItem = (row) => {
 
 // 渲染表格数据
 const getList = () => {
-    if (!data.curClusterId || !data.curNsName) {
+    if (!data.clusterId || !data.nameSpace) {
         data.items = []
         return
     }
-    getdeploymentListHandler(data.curClusterId, data.curNsName).then((res) => {
+    getdeploymentListHandler(data.clusterId, data.nameSpace).then((res) => {
         data.items = res.data.data.items || []
     })
 }
@@ -49,10 +49,14 @@ const getSelectValue = (selectValue) =>{
     Object.assign(data, selectValue)
     getList()
 }
+const closeDialogOfItem = () => {
+    createItemDialogVisible.value = false
+    getList()
+}
+
 
 // 接受子组件table传递的参数
 const data = reactive({})
-const createItemData = reactive({})
 const createItemDialogVisible = ref(false)
 </script>
 
@@ -75,10 +79,10 @@ const createItemDialogVisible = ref(false)
         </template>
      </ElCard>
 
-         <!-- 创建 item 按钮 -->
-    <DialogByCreateItem
+    <!-- 创建 item 按钮 -->
+    <DialogOfItem
         v-if="createItemDialogVisible"
         :open-dialog="createItemDialogVisible"
-        @close-dialog="createItemDialogVisible=false"
+        @close-dialog="closeDialogOfItem"
     />
 </template>    

@@ -6,21 +6,6 @@ import DialogHeaderLabel from '../components/DialogHeaderLabel.vue'
 
 const emit = defineEmits(['deleteItem'])
 
-const getContainerStatus = (row) => {
-    const statuses = row?.status?.containerStatuses || []
-    const total = statuses.length
-    const ready = statuses.filter((item) => item?.ready).length
-    return `${ready}/${total}`
-}
-
-const getRestartCount = (row) => {
-    const statuses = row?.status?.containerStatuses || []
-    if (!statuses.length) {
-        return 0
-    }
-    return Math.max(...statuses.map((item) => item?.restartCount || 0))
-}
-
 const getAgeText = (row) => {
     const creationTimestamp = row?.metadata?.creationTimestamp
     if (!creationTimestamp) {

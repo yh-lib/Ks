@@ -1,18 +1,18 @@
 <script setup>
 const props = defineProps({
-    labelList:{
+    tableList:{
         type: Array,
         default: []
     },
 })
 const emit = defineEmits([
-    'addLabel',
-    'deleteLabel'
+    'addTableRow',
+    'deleteTableRow'
 ])
 </script>
 
 <template>
-    <el-table :data="props.labelList" style="width: 100%; height:100%">
+    <el-table :data="props.tableList" style="width: 100%; height:100%">
         <!-- Key -->
         <el-table-column prop="key" label="Key">
             <template #default="scope">
@@ -28,10 +28,10 @@ const emit = defineEmits([
         <!-- Operation -->
         <el-table-column width="200px" align="center">
             <template #header>
-                <el-button type="primary" link style="font-size: 16px;margin-bottom: 10px;" @click="emit('addLabel')">添加</el-button>
+                <el-button type="primary" link style="font-size: 16px;margin-bottom: 10px;" @click="emit('addTableRow')">添加</el-button>
             </template>
             <template #default="scope">
-                <el-button type="danger" link style="font-size: 16px;margin-bottom: 10px;" @click="emit('deleteLabel',scope.$index)">删除</el-button>
+                <el-button type="danger" link style="font-size: 16px;margin-bottom: 10px;" @click="emit('deleteTableRow',scope.$index)">删除</el-button>
             </template>                      
         </el-table-column>
     </el-table> 

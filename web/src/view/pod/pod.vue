@@ -17,7 +17,7 @@ const deleteItem = (row) => {
         }
     )
     .then(() => {
-        deletePodHandler(data.curClusterId,data.curNsName,row.metadata.name).then((res)=>{
+        deletePodHandler(data.clusterId,data.nameSpace,row.metadata.name).then((res)=>{
             if (res.data.status == 200) {
                 ElMessage({
                     type: 'success',
@@ -34,11 +34,11 @@ const deleteItem = (row) => {
 
 // 渲染表格数据
 const getList = () => {
-    if (!data.curClusterId || !data.curNsName) {
+    if (!data.clusterId || !data.nameSpace) {
         data.items = []
         return
     }
-    getPodListHandler(data.curClusterId, data.curNsName).then((res) => {
+    getPodListHandler(data.clusterId, data.nameSpace).then((res) => {
         data.items = res.data.data.items || []
     })
 }

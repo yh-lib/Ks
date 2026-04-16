@@ -39,8 +39,85 @@ export const useIsCollapse = defineStore('isCollapse', {
     getters: {
     },
     actions: {
-        changeisCollapse(){
+        changeisCollapse() {
             this.isCollapse = !this.isCollapse
         }
+    }
+})
+
+// 工作负载数据模型
+export const useWorkLoadData = defineStore('workLoadData', {
+    state: () => {
+        return {
+            workLoadItem: {
+                'clusterId': '',
+                'nameSpace': '',
+                'name': '',
+                'item': {
+                    "kind": "Deployment",
+                    "apiVersion": "apps/v1",
+                    "metadata": {
+                        "name": "",
+                        "namespace": "",
+                        "labels": {
+                        },
+                        "annotations": {
+                        },
+                    },
+                    "spec": {
+                        "replicas": 3,
+                        "selector": {
+                            "matchLabels": {
+                            }
+                        },
+                        "template": {
+                            "metadata": {
+                                "labels": {
+                                },
+                                "annotations": {
+                                }
+                            },
+                            "spec": {
+                                "hostNetwork": false,
+                                "containers": [
+                                    {
+                                        "name": "container-1",
+                                        "image": "",
+                                        "resources": {},
+                                        "imagePullPolicy": "IfNotPresent"
+                                    }
+                                ],
+                                "restartPolicy": "Always",
+                                "terminationGracePeriodSeconds": 30,
+                                "dnsPolicy": "Default",
+                                "securityContext": {},
+                                "schedulerName": "default-scheduler",
+                                "tolerations": [
+                                    {
+                                        key: 'node-role.kubernetes.io/master',
+                                        operator: 'Exists',
+                                        effect: 'NoSchedule'
+                                    }
+                                ],
+                                "imagePullSecrets": [{ name: '' }]
+                            }
+                        },
+                        "strategy": {
+                            "type": "RollingUpdate",
+                            "rollingUpdate": {
+                                "maxUnavailable": "25%",
+                                "maxSurge": "25%"
+                            }
+                        },
+                        "revisionHistoryLimit": 10,
+                        "progressDeadlineSeconds": 600
+                    }
+                },
+            }
+        }
+    },
+    getters: {
+    },
+    actions: {
     }
 })

@@ -9,10 +9,10 @@ const emit = defineEmits(['change','refresh','createItem'])
 
 const data = reactive({
     // 集群信息
-    curClusterId: '',
+    clusterId: '',
     clusterOptions: [],
     // namespace 信息
-    curNsName: '',
+    nameSpace: '',
     nsOptions: [],
     search: '',
 })
@@ -36,13 +36,13 @@ onBeforeMount(async () => {
     await getclusterOptions()
     // 获取select默认选择集群ID
     if (data.clusterOptions.length > 0) {
-        data.curClusterId = data.clusterOptions[0].clusterId
+        data.clusterId = data.clusterOptions[0].clusterId
     }
     // 获取 namespace 列表
     await getNsOptions()
     // 获取 namespace 默认选择 namespace
     if (data.nsOptions.length > 0) {
-        data.curNsName = data.nsOptions[0].metadata.name
+        data.nameSpace = data.nsOptions[0].metadata.name
     }
     syncToParent()
 })
@@ -50,7 +50,7 @@ onBeforeMount(async () => {
 const handleClusterChange = async () => {
     await getNsOptions()
     if (data.nsOptions.length > 0) {
-        data.curNsName = data.nsOptions[0].metadata.name
+        data.nameSpace = data.nsOptions[0].metadata.name
     }
     syncToParent()
 }
@@ -64,7 +64,7 @@ const handleSearchChange = () => {
 }
 // 获取 namespace 列表
 const getNsOptions = async ()=>{
-    await getNamespaceListHandler(data.curClusterId).then((res)=>{
+    await getNamespaceListHandler(data.clusterId).then((res)=>{
         if (res.data.status === 200) {
             data.nsOptions = res.data.data.items || [];
         }
@@ -89,7 +89,7 @@ const getclusterOptions = async ()=>{
             <span class="card-title">{{ props.title }}</span>
         </div>
         <div class="card-controls">
-          <el-select v-model="data.curClusterId" placeholder="选择集群" class="control-select" v-show="props.opCluster" filterable @change="handleClusterChange">
+          <el-select v-model="data.clusterId" placeholder="选择集群" class="control-select" v-show="props.opCluster" filterable @change="handleClusterChange">
               <el-option
                   v-for="item in data.clusterOptions"
                   :key="item.clusterId"
@@ -97,7 +97,7 @@ const getclusterOptions = async ()=>{
                   :value="item.clusterId"
               />
           </el-select>               
-          <el-select v-model="data.curNsName" placeholder="选择命名空间" class="control-select" v-show="props.opNs" filterable @change="handleNsChange">
+          <el-select v-model="data.nameSpace" placeholder="选择命名空间" class="control-select" v-show="props.opNs" filterable @change="handleNsChange">
               <el-option
                   v-for="item in data.nsOptions"
                   :key="item.metadata.name"
