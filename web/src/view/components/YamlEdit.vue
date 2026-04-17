@@ -1,5 +1,4 @@
 <script setup>
-import { ref } from 'vue';
 // 导入 codemirror 编辑器主体
 import { Codemirror } from 'vue-codemirror';
 // 导入编辑器支持的语言：语法高亮等功能

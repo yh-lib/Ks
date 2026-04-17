@@ -1,10 +1,10 @@
 <script setup>
-import ElCard from '../ElCard.vue';
-import { useWorkLoadData } from '../../../store';
+import ElCard from '../../ElCard.vue';
+import { useWorkLoadData } from '../../../../store';
 import { storeToRefs } from 'pinia';
 import { reactive } from 'vue';
-import TableOfKeyValue from './TableOfKeyValue.vue';
-import { getSecretListHandler } from '../../../api/secret';
+import TableOfKeyValue from '../TableOfKeyValue.vue';
+import { getSecretListHandler } from '../../../../api/secret';
 import { ElMessage } from 'element-plus';
 
 // store from pinia

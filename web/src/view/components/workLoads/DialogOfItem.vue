@@ -5,7 +5,11 @@ import { ElMessage } from 'element-plus';
 import { list2obj } from '../../../utils/typeConv/type.conv';
 import { useWorkLoadData } from '../../../store';
 import { storeToRefs } from 'pinia';
-import TabOfBasicConfig from './TabOfBasicConfig.vue';
+import TabOfBasicConfig from './TabOfBasicConfig/TabOfBasicConfig.vue';
+import TabOfScheduleConfig from './tabOfScheduleConfig/TabOfScheduleConfig.vue';
+import DialogByYaml from '../DialogByYaml.vue';
+import { obj2yaml } from '../../../utils/typeConv/type.conv';
+import YamlEdit from '../YamlEdit.vue';
 
 const props = defineProps(['openDialog'])
 const emit = defineEmits(['closeDialog'])
@@ -50,6 +54,13 @@ const createItem = () => {
       }
   })
 }
+// Yaml
+const itemOfYaml = ref('')
+const getItemOfYaml = (tab) => {
+  if (tab.paneName !== 'Yaml') return
+  console.log('北极点')
+  itemOfYaml.value = obj2yaml(workLoadItem.value)
+}
 </script>
 
 <template>
@@ -60,12 +71,12 @@ const createItem = () => {
     style="height: 740px;"
     @close="emit('closeDialog')"
   >
-    <el-tabs v-model="activeName">
+    <el-tabs v-model="activeName" @tab-click="getItemOfYaml">
         <el-tab-pane label="基本配置" name="Basic">
           <TabOfBasicConfig ref="basicRef" />
         </el-tab-pane>
         <el-tab-pane label="调度配置" name="Schedule">
-          调度配置
+          <TabOfScheduleConfig />
         </el-tab-pane>
         <el-tab-pane label="存储卷配置" name="Volume">
           存储卷配置
@@ -76,9 +87,16 @@ const createItem = () => {
         <el-tab-pane label="初始化容器" name="InitContainer">
           初始化容器
         </el-tab-pane>
+        <el-tab-pane label="Yaml" name="Yaml">
+          <YamlEdit 
+          :code="itemOfYaml"
+          style="height: 560px;"
+          />
+        </el-tab-pane>
     </el-tabs>
     <el-button type="primary" size="large" style="margin-top: 20px;width: 90px;" @click="createItem">创建</el-button>
   </el-dialog>
+  
 </template>
 
 <style scoped>

@@ -13,7 +13,7 @@ export const settingRoutes = {
         },
         {
             path: "test",
-            component: () => import('../view/components/workLoads/TabOfBasicConfig.vue'),
+            component: () => import('../view/components/workLoads/tabOfBasicConfig/TabOfBasicConfig.vue'),
         }
     ]
 }
