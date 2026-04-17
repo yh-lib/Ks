@@ -33,14 +33,8 @@ const handleClose = () => {
 
 
 const createItem = () => {
-  if (basicRef.value.data.labelsAndAnnotationsSwtich == 'auto'){
-    // 自动生成
-    workLoadItem.value.item.metadata.labels.app = workLoadItem.value.item.metadata.name
-    workLoadItem.value.item.spec.selector.matchLabels.app = workLoadItem.value.item.metadata.name
-    workLoadItem.value.item.spec.template.metadata.labels.app = workLoadItem.value.item.metadata.name
-  }else {
-    syncToWorkLoadItem()
-  }
+  // 同步子组件数据至模板
+  syncToWorkLoadItem()
   // 如果 imagePullSecrets 为空，则删除该字段，否则会报错
   if (
     workLoadItem.value.item.spec.template.spec.imagePullSecrets &&
@@ -68,14 +62,20 @@ const getItemOfYaml = (tab) => {
   // 转换模板数据为yaml
   itemOfYaml.value = obj2yaml(workLoadItem.value.item)
 }
-
 // 同步子组件数据至模板
 const syncToWorkLoadItem = () => {
-  // 基本配置组件数据
-  workLoadItem.value.item.metadata.labels = list2obj(basicRef.value.data.controllerLabelsList)
-  workLoadItem.value.item.spec.selector.matchLabels = list2obj(basicRef.value.data.controllerLabelsList)
-  workLoadItem.value.item.spec.template.metadata.labels = list2obj(basicRef.value.data.controllerLabelsList)
-  workLoadItem.value.item.metadata.annotations = list2obj(basicRef.value.data.controllerAnnotationsList)
+  // 基本配置组件：  标签 注释
+  if (basicRef.value.data.labelsAndAnnotationsSwtich == 'auto'){
+    // 自动生成
+    workLoadItem.value.item.metadata.labels.app = workLoadItem.value.item.metadata.name
+    workLoadItem.value.item.spec.selector.matchLabels.app = workLoadItem.value.item.metadata.name
+    workLoadItem.value.item.spec.template.metadata.labels.app = workLoadItem.value.item.metadata.name
+  }else {
+    workLoadItem.value.item.metadata.labels = list2obj(basicRef.value.data.controllerLabelsList)
+    workLoadItem.value.item.spec.selector.matchLabels = list2obj(basicRef.value.data.controllerLabelsList)
+    workLoadItem.value.item.spec.template.metadata.labels = list2obj(basicRef.value.data.controllerLabelsList)
+    workLoadItem.value.item.metadata.annotations = list2obj(basicRef.value.data.controllerAnnotationsList)
+  }
   // 调度组件数据
   workLoadItem.value.item.spec.template.spec.nodeSelector = list2obj(scheduleRef.value.data.nodeLabelsList)
 }

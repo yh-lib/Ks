@@ -67,19 +67,6 @@ const getVolumeType = (row) => {
 
     return ''
 }
-// 获取volume配置
-const getVolumeConfig = (row) => {
-    if (!row) return ''
-
-    if (row.configMap) return 'configMap'
-    if (row.secret) return 'secret'
-    if (row.emptyDir) return 'emptyDir'
-    if (row.hostPath) return row.hostPath
-    if (row.persistentVolumeClaim) return 'pvc'
-    if (row.nfs) return 'nfs'
-
-    return ''
-}
 </script>
 
 <template>
