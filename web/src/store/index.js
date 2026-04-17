@@ -41,6 +41,7 @@ const defaultWorkLoadItem = () => ({
                             "imagePullPolicy": "IfNotPresent"
                         }
                     ],
+                    "volumes": [],
                     "restartPolicy": "Always",
                     "terminationGracePeriodSeconds": 30,
                     "dnsPolicy": "Default",

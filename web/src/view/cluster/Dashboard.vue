@@ -409,6 +409,7 @@ const refreshDashboard = async () => {
 
 .events-card {
   width: 100%;
+  height: 620px;
   min-width: 0;
   box-sizing: border-box;
 }

@@ -10,6 +10,7 @@ import TabOfScheduleConfig from './tabOfScheduleConfig/TabOfScheduleConfig.vue';
 import DialogByYaml from '../DialogByYaml.vue';
 import { obj2yaml } from '../../../utils/typeConv/type.conv';
 import YamlEdit from '../YamlEdit.vue';
+import TabOfVolumeConfig from './tabOfVolumeConfig/tabOfVolumeConfig.vue';
 
 const props = defineProps(['openDialog'])
 const emit = defineEmits(['closeDialog'])
@@ -97,7 +98,7 @@ const syncToWorkLoadItem = () => {
           <TabOfScheduleConfig ref="scheduleRef"/>
         </el-tab-pane>
         <el-tab-pane label="存储卷配置" name="Volume">
-          存储卷配置
+          <TabOfVolumeConfig ref="volumeRef" />
         </el-tab-pane>        
         <el-tab-pane label="容器配置" name="Container">
           容器配置

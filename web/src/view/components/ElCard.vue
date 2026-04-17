@@ -135,6 +135,7 @@ const getclusterOptions = async ()=>{
 <style scoped>
 .ks-card {
     width: 100%;
+    height: 1150px;
     display: block;
     border: 1px solid #e6eaf0;
     border-radius: 24px;

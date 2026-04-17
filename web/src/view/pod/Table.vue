@@ -87,7 +87,7 @@ const getItem = (row) => {
 </script>
 
 <template>
-    <el-table :data="filterTableData" height="70vh" >
+    <el-table :data="filterTableData" height="1010px" >
         <el-table-column label="名称" prop="metadata.name" width="300px">
             <template #default="scope">
                 <el-button type="primary" link @click="getItem(scope.row)">{{ scope.row.metadata.name }}</el-button>
