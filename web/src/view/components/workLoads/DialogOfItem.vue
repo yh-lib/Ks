@@ -17,11 +17,18 @@ const activeName = ref('Basic')
 
 // 创建ref来获取子组件实例
 const basicRef = ref(null)
+const scheduleRef = ref(null)
 
 // store from pinia
 const store = useWorkLoadData()
 const { workLoadItem } = storeToRefs(store)
 
+const handleClose = () => {
+  store.resetWorkLoadItem()
+  activeName.value = 'Basic'
+  itemOfYaml.value = ''
+  emit('closeDialog')
+}
 
 
 const createItem = () => {
@@ -31,10 +38,7 @@ const createItem = () => {
     workLoadItem.value.item.spec.selector.matchLabels.app = workLoadItem.value.item.metadata.name
     workLoadItem.value.item.spec.template.metadata.labels.app = workLoadItem.value.item.metadata.name
   }else {
-    workLoadItem.value.item.metadata.labels = list2obj(basicRef.value.data.controllerLabelsList)
-    workLoadItem.value.item.spec.selector.matchLabels = list2obj(basicRef.value.data.controllerLabelsList)
-    workLoadItem.value.item.spec.template.metadata.labels = list2obj(basicRef.value.data.controllerLabelsList)
-    workLoadItem.value.item.metadata.annotations = list2obj(basicRef.value.data.controllerAnnotationsList)
+    syncToWorkLoadItem()
   }
   // 如果 imagePullSecrets 为空，则删除该字段，否则会报错
   if (
@@ -58,7 +62,21 @@ const createItem = () => {
 const itemOfYaml = ref('')
 const getItemOfYaml = (tab) => {
   if (tab.paneName !== 'Yaml') return
+  // 同步数据至模板
+  syncToWorkLoadItem()
+  // 转换模板数据为yaml
   itemOfYaml.value = obj2yaml(workLoadItem.value)
+}
+
+// 同步子组件数据至模板
+const syncToWorkLoadItem = () => {
+  // 基本配置组件数据
+  workLoadItem.value.item.metadata.labels = list2obj(basicRef.value.data.controllerLabelsList)
+  workLoadItem.value.item.spec.selector.matchLabels = list2obj(basicRef.value.data.controllerLabelsList)
+  workLoadItem.value.item.spec.template.metadata.labels = list2obj(basicRef.value.data.controllerLabelsList)
+  workLoadItem.value.item.metadata.annotations = list2obj(basicRef.value.data.controllerAnnotationsList)
+  // 调度组件数据
+  workLoadItem.value.item.spec.template.spec.nodeSelector = list2obj(scheduleRef.value.data.nodeLabelsList)
 }
 </script>
 
@@ -68,14 +86,15 @@ const getItemOfYaml = (tab) => {
     v-model="props.openDialog"
     width="1600px"
     style="height: 740px;"
-    @close="emit('closeDialog')"
+    @close="handleClose"
+    destroy-on-close
   >
     <el-tabs v-model="activeName" @tab-click="getItemOfYaml">
         <el-tab-pane label="基本配置" name="Basic">
           <TabOfBasicConfig ref="basicRef" />
         </el-tab-pane>
         <el-tab-pane label="调度配置" name="Schedule">
-          <TabOfScheduleConfig />
+          <TabOfScheduleConfig ref="scheduleRef"/>
         </el-tab-pane>
         <el-tab-pane label="存储卷配置" name="Volume">
           存储卷配置

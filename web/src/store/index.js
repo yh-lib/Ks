@@ -2,6 +2,67 @@
 // step1: 安装pinia
 import { defineStore } from 'pinia'
 
+const defaultWorkLoadItem = () => ({
+    'clusterId': '',
+    'nameSpace': '',
+    'name': '',
+    'item': {
+        "kind": "Deployment",
+        "apiVersion": "apps/v1",
+        "metadata": {
+            "name": "",
+            "namespace": "",
+            "labels": {
+            },
+            "annotations": {
+            },
+        },
+        "spec": {
+            "replicas": 3,
+            "selector": {
+                "matchLabels": {
+                }
+            },
+            "template": {
+                "metadata": {
+                    "labels": {
+                    },
+                    "annotations": {
+                    }
+                },
+                "spec": {
+                    "nodeSelector": {},
+                    "hostNetwork": false,
+                    "containers": [
+                        {
+                            "name": "container-1",
+                            "image": "",
+                            "resources": {},
+                            "imagePullPolicy": "IfNotPresent"
+                        }
+                    ],
+                    "restartPolicy": "Always",
+                    "terminationGracePeriodSeconds": 30,
+                    "dnsPolicy": "Default",
+                    "securityContext": {},
+                    "schedulerName": "default-scheduler",
+                    "tolerations": [],
+                    "imagePullSecrets": [{ name: '' }]
+                }
+            },
+            "strategy": {
+                "type": "RollingUpdate",
+                "rollingUpdate": {
+                    "maxUnavailable": "25%",
+                    "maxSurge": "25%"
+                }
+            },
+            "revisionHistoryLimit": 10,
+            "progressDeadlineSeconds": 600
+        }
+    },
+})
+
 // step2: 创建一个容器
 export const useDemoStore = defineStore('demo', {
     // 容器的内容
@@ -49,75 +110,14 @@ export const useIsCollapse = defineStore('isCollapse', {
 export const useWorkLoadData = defineStore('workLoadData', {
     state: () => {
         return {
-            workLoadItem: {
-                'clusterId': '',
-                'nameSpace': '',
-                'name': '',
-                'item': {
-                    "kind": "Deployment",
-                    "apiVersion": "apps/v1",
-                    "metadata": {
-                        "name": "",
-                        "namespace": "",
-                        "labels": {
-                        },
-                        "annotations": {
-                        },
-                    },
-                    "spec": {
-                        "replicas": 3,
-                        "selector": {
-                            "matchLabels": {
-                            }
-                        },
-                        "template": {
-                            "metadata": {
-                                "labels": {
-                                },
-                                "annotations": {
-                                }
-                            },
-                            "spec": {
-                                "hostNetwork": false,
-                                "containers": [
-                                    {
-                                        "name": "container-1",
-                                        "image": "",
-                                        "resources": {},
-                                        "imagePullPolicy": "IfNotPresent"
-                                    }
-                                ],
-                                "restartPolicy": "Always",
-                                "terminationGracePeriodSeconds": 30,
-                                "dnsPolicy": "Default",
-                                "securityContext": {},
-                                "schedulerName": "default-scheduler",
-                                "tolerations": [
-                                    {
-                                        key: 'node-role.kubernetes.io/master',
-                                        operator: 'Exists',
-                                        effect: 'NoSchedule'
-                                    }
-                                ],
-                                "imagePullSecrets": [{ name: '' }]
-                            }
-                        },
-                        "strategy": {
-                            "type": "RollingUpdate",
-                            "rollingUpdate": {
-                                "maxUnavailable": "25%",
-                                "maxSurge": "25%"
-                            }
-                        },
-                        "revisionHistoryLimit": 10,
-                        "progressDeadlineSeconds": 600
-                    }
-                },
-            }
+            workLoadItem: defaultWorkLoadItem()
         }
     },
     getters: {
     },
     actions: {
+        resetWorkLoadItem() {
+            this.workLoadItem = defaultWorkLoadItem()
+        }
     }
 })
