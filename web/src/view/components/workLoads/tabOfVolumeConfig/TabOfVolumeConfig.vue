@@ -75,11 +75,11 @@ const getVolumeType = (row) => {
 </script>
 
 <template>
-    <el-table :data="workLoadItem.item.spec.template.spec.volumes" style="width: 100%; height:560px" class="no-border-input">
+    <el-table :data="workLoadItem.item.spec.template.spec.volumes" style="width: 100%; height:560px">
         <!-- 名称 -->
         <el-table-column prop="name" label="名称" width="400px">
             <template #default="scope">
-                <el-input v-model="scope.row.name"></el-input>
+                <el-input v-model="scope.row.name" class="no-border-input"></el-input>
             </template>
         </el-table-column>
         <!-- 类型 -->
@@ -111,7 +111,7 @@ const getVolumeType = (row) => {
     <!-- Dialog 添加存储卷 -->
     <el-dialog
         v-model="data.dialogOfAddVolumeVisible"
-        width="800px"
+        width="1400px"
         title="添加存储卷"
         style="margin-top: 350px;"
         destroy-on-close
@@ -119,7 +119,7 @@ const getVolumeType = (row) => {
         <div style="display: flex;justify-content: left;padding: 0 70px;margin-top: 10px;">
             <!-- Select 选择存储卷类型 -->
             <span style="width: 120px;margin-top: 10px;">存储卷类型</span>
-            <el-select v-model="data.volumeType" placeholder="请选择存储卷类型" size="large" style="width: 470px;margin-left: 20px;">
+            <el-select v-model="data.volumeType" placeholder="请选择存储卷类型" size="large" style="width: 1070px;margin-left: 20px;">
                 <el-option
                     v-for="item in volumeTypeOptions"
                     :key="item"

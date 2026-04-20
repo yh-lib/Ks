@@ -32,7 +32,7 @@ const handleClose = () => {
   emit('closeDialog')
 }
 
-
+// 创建调度管理资源
 const createItem = () => {
   // 同步子组件数据至模板
   syncToWorkLoadItem()
@@ -83,6 +83,15 @@ const syncToWorkLoadItem = () => {
   workLoadItem.value.item.spec.template.spec.volumes.forEach(item => {
     item?.emptyDir?.medium == 'Disk' && delete item.emptyDir.medium
   });
+  // 存储配置组件
+  // Tip：JS没有八进制int类型
+  // if (typeof(workLoadItem.value.item.spec.template.spec.volumes[0].defaultMode) == 'string'){
+    // console.log('测试数据:::',typeof(workLoadItem.value.item.spec.template.spec.volumes[0].defaultMode))
+    // workLoadItem.value.item.spec.template.spec.volumes[0].defaultMode = parseInt(workLoadItem.value.item.spec.template.spec.volumes[0].defaultMode,8)
+    // console.log('测试数据:::',parseInt(workLoadItem.value.item.spec.template.spec.volumes[0].defaultMode,8))
+    // console.log('测试数据:::',typeof(workLoadItem.value.item.spec.template.spec.volumes[0].defaultMode))
+    // parseInt(workLoadItem.value.item.spec.template.spec.volumes[0].defaultMode,8)
+  // }
 }
 </script>
 

@@ -42,6 +42,11 @@ export const API_CONFIG = {
     secretDeleteApi: `${BASE_URL}/secret/delete`,
     // pvc 管理
     pvcListApi: `${BASE_URL}/pvc/list`,
+    // configMap 管理
+    configMapListApi: `${BASE_URL}/configMap/list`,
+    configMapGetApi: `${BASE_URL}/configMap/get`,
+    configMapDeleteApi: `${BASE_URL}/configMap/delete`,
+    configMapCreateApi: `${BASE_URL}/configMap/create`,
 }
 
 export const CONFIG = {
