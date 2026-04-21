@@ -3,6 +3,6 @@
 
 <template>
     <div>
-       Job
+       容器配置
     </div>
 </template>    

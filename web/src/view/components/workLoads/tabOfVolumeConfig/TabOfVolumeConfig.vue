@@ -75,7 +75,7 @@ const getVolumeType = (row) => {
 </script>
 
 <template>
-    <el-table :data="workLoadItem.item.spec.template.spec.volumes" style="width: 100%; height:560px">
+    <el-table :data="workLoadItem.item.spec.template.spec.volumes" style="width: 100%; height:567px">
         <!-- 名称 -->
         <el-table-column prop="name" label="名称" width="400px">
             <template #default="scope">

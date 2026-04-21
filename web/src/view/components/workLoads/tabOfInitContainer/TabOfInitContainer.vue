@@ -3,6 +3,6 @@
 
 <template>
     <div>
-       Job
+       初始化容器配置
     </div>
 </template>    

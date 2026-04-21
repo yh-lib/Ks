@@ -11,6 +11,8 @@ import DialogByYaml from '../DialogByYaml.vue';
 import { obj2yaml } from '../../../utils/typeConv/type.conv';
 import YamlEdit from '../YamlEdit.vue';
 import TabOfVolumeConfig from './tabOfVolumeConfig/tabOfVolumeConfig.vue';
+import TabOfContainer from './tabOfContainer/TabOfContainer.vue';
+import TabOfInitContainer from './tabOfInitContainer/TabOfInitContainer.vue';
 
 const props = defineProps(['openDialog'])
 const emit = defineEmits(['closeDialog'])
@@ -83,15 +85,6 @@ const syncToWorkLoadItem = () => {
   workLoadItem.value.item.spec.template.spec.volumes.forEach(item => {
     item?.emptyDir?.medium == 'Disk' && delete item.emptyDir.medium
   });
-  // 存储配置组件
-  // Tip：JS没有八进制int类型
-  // if (typeof(workLoadItem.value.item.spec.template.spec.volumes[0].defaultMode) == 'string'){
-    // console.log('测试数据:::',typeof(workLoadItem.value.item.spec.template.spec.volumes[0].defaultMode))
-    // workLoadItem.value.item.spec.template.spec.volumes[0].defaultMode = parseInt(workLoadItem.value.item.spec.template.spec.volumes[0].defaultMode,8)
-    // console.log('测试数据:::',parseInt(workLoadItem.value.item.spec.template.spec.volumes[0].defaultMode,8))
-    // console.log('测试数据:::',typeof(workLoadItem.value.item.spec.template.spec.volumes[0].defaultMode))
-    // parseInt(workLoadItem.value.item.spec.template.spec.volumes[0].defaultMode,8)
-  // }
 }
 </script>
 
@@ -106,24 +99,24 @@ const syncToWorkLoadItem = () => {
   >
     <el-tabs v-model="activeName" @tab-click="getItemOfYaml">
         <el-tab-pane label="基本配置" name="Basic">
-          <TabOfBasicConfig ref="basicRef" />
+          <TabOfBasicConfig ref="basicRef" style="height: 550px;"/>
         </el-tab-pane>
         <el-tab-pane label="调度配置" name="Schedule">
-          <TabOfScheduleConfig ref="scheduleRef"/>
+          <TabOfScheduleConfig ref="scheduleRef" style="height: 567px;"/>
         </el-tab-pane>
         <el-tab-pane label="存储配置" name="Volume">
-          <TabOfVolumeConfig />
+          <TabOfVolumeConfig/>
         </el-tab-pane>        
         <el-tab-pane label="容器配置" name="Container">
-          容器配置
+          <TabOfContainer style="height: 567px;"/>
         </el-tab-pane>
         <el-tab-pane label="初始化容器" name="InitContainer">
-          初始化容器
+          <TabOfInitContainer style="height: 567px;"/>
         </el-tab-pane>
         <el-tab-pane label="Yaml" name="Yaml">
           <YamlEdit 
           :code="itemOfYaml"
-          style="height: 560px;"
+          style="height: 562px;"
           />
         </el-tab-pane>
     </el-tabs>
