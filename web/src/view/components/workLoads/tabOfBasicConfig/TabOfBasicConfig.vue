@@ -81,7 +81,7 @@ defineExpose({
 </script>
 
 <template>
-    <ElCard :op-cluster="true" :op-ns="true" style="border-radius: 0px;width: 1560px;" @change="getSelectValue">
+    <ElCard :op-cluster="true" :op-ns="true" style="border-radius: 0px;width: 1560px;height: 550px;" @change="getSelectValue">
         <template #mainData>
             <!-- 基础信息 -->
             <el-form label-width="150px" label-position="left" style="height: 450px;width: 1490px;">

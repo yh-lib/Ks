@@ -12,7 +12,6 @@ import { obj2yaml } from '../../../utils/typeConv/type.conv';
 import YamlEdit from '../YamlEdit.vue';
 import TabOfVolumeConfig from './tabOfVolumeConfig/tabOfVolumeConfig.vue';
 import TabOfContainer from './tabOfContainer/TabOfContainer.vue';
-import TabOfInitContainer from './tabOfInitContainer/TabOfInitContainer.vue';
 
 const props = defineProps(['openDialog'])
 const emit = defineEmits(['closeDialog'])
@@ -99,19 +98,19 @@ const syncToWorkLoadItem = () => {
   >
     <el-tabs v-model="activeName" @tab-click="getItemOfYaml">
         <el-tab-pane label="基本配置" name="Basic">
-          <TabOfBasicConfig ref="basicRef" style="height: 550px;"/>
+          <TabOfBasicConfig ref="basicRef"/>
         </el-tab-pane>
         <el-tab-pane label="调度配置" name="Schedule">
-          <TabOfScheduleConfig ref="scheduleRef" style="height: 567px;"/>
+          <TabOfScheduleConfig ref="scheduleRef"/>
         </el-tab-pane>
         <el-tab-pane label="存储配置" name="Volume">
           <TabOfVolumeConfig/>
         </el-tab-pane>        
         <el-tab-pane label="容器配置" name="Container">
-          <TabOfContainer style="height: 567px;"/>
+          <TabOfContainer container-type="container"/>
         </el-tab-pane>
         <el-tab-pane label="初始化容器" name="InitContainer">
-          <TabOfInitContainer style="height: 567px;"/>
+          <TabOfContainer container-type="init"/>
         </el-tab-pane>
         <el-tab-pane label="Yaml" name="Yaml">
           <YamlEdit 

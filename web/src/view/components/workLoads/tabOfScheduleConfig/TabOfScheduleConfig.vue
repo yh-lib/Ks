@@ -37,7 +37,7 @@ const deleteTolerationItem = (index) => {workLoadItem.value.item.spec.template.s
 </script>
 
 <template>
-  <el-tabs tab-position="left" class="no-border-input">
+  <el-tabs tab-position="left" class="no-border-input" style="height: 567px;">
     <el-tab-pane label="节点选择">
       <TableOfKeyValue
       :table-list="data.nodeLabelsList"
