@@ -1,8 +1,5 @@
-<script setup>
-</script>
+<script setup></script>
 
 <template>
-    <div>
-       cluster events
-    </div>
-</template>    
+  <div>cluster events</div>
+</template>

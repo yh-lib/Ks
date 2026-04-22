@@ -5,7 +5,6 @@ import App from './App.vue'
 
 const app = createApp(App)
 
-
 // 导入 router
 import router from './router/index.js'
 app.use(router)

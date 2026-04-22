@@ -1,8 +1,5 @@
-<script setup>
-</script>
+<script setup></script>
 
 <template>
-    <div>
-       statefulset
-    </div>
-</template>    
+  <div>statefulset</div>
+</template>

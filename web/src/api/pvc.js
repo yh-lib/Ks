@@ -1,9 +1,9 @@
-import { API_CONFIG } from "../config/index.js"
-import request from "./axiosEncap.js"
+import { API_CONFIG } from '../config/index.js'
+import request from './axiosEncap.js'
 
 // 获取 pvc 列表
 export const getPvcListHandler = (clusterId, nameSpace) => {
-    return request(API_CONFIG.pvcListApi, { clusterId, nameSpace }, 'get')
+  return request(API_CONFIG.pvcListApi, { clusterId, nameSpace }, 'get')
 }
 
 // // 获取 secret 详情
@@ -20,7 +20,6 @@ export const getPvcListHandler = (clusterId, nameSpace) => {
 // export const createsecretHandler = (clusterId, item) => {
 //     return request(API_CONFIG.secretCreateApi, { clusterId, item }, 'post')
 // }
-
 
 // // 更新 secret
 // export const updatesecretHandler = (secretInfo) => {

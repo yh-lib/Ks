@@ -1,8 +1,5 @@
-<script setup>
-</script>
+<script setup></script>
 
 <template>
-    <div>
-       Job
-    </div>
-</template>    
+  <div>Job</div>
+</template>

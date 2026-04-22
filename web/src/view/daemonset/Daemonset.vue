@@ -1,8 +1,5 @@
-<script setup>
-</script>
+<script setup></script>
 
 <template>
-    <div>
-       Daemonset
-    </div>
-</template>    
+  <div>Daemonset</div>
+</template>
