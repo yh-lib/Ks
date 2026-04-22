@@ -34,12 +34,12 @@ export const MENU_CONFIG = [
     icon: 'Box', // 盒子代表容器/负载
     items: [
       {
-        title: 'Pod',
+        title: '容器集 (Pod)',
         index: '/workloads/pod',
         icon: 'Aim',
       },
       {
-        title: '部署 (Deployment)',
+        title: '无状态集 (Deployment)',
         index: '/workloads/deployment',
         icon: 'Suitcase', // 火箭代表发布/部署
       },
@@ -54,7 +54,7 @@ export const MENU_CONFIG = [
         icon: 'Lock', // 盾牌代表守护/安全
       },
       {
-        title: '任务与定时任务',
+        title: '任务与定时任务 (Job)',
         index: '/workloads/job',
         icon: 'Timer', // 定时器代表任务
       },
