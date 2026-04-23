@@ -18,16 +18,78 @@
     containerItem: workLoadItem.value.item.spec.template.spec.containers,
   })
 
+  // 添加新容器的item模板
+  const getContainerTemplate = (newTabIndex) => {
+    return {
+      name: `Container-${newTabIndex}`,
+      ports: [],
+      env: [],
+      envFrom: [],
+      volumeMounts: [],
+      resources: {
+        requests: {},
+        limits: {},
+      },
+      startupProbe: {
+        // 通用参数
+        initialDelaySeconds: 0,
+        periodSeconds: 10,
+        timeoutSeconds: 1,
+        successThreshold: 1,
+        failureThreshold: 30,
+        terminationGracePeriodSeconds: 30,
+        // 探测方法
+        exec: { command: [] },
+        tcpSocket: {},
+        httpGet: {
+          httpHeaders: [],
+        },
+        grpc: {},
+      },
+      readinessProbe: {
+        // 通用参数
+        initialDelaySeconds: 0,
+        periodSeconds: 10,
+        timeoutSeconds: 1,
+        successThreshold: 1,
+        failureThreshold: 30,
+        terminationGracePeriodSeconds: 30,
+        // 探测方法
+        exec: { command: [] },
+        tcpSocket: {},
+        httpGet: {
+          httpHeaders: [],
+        },
+        grpc: {},
+      },
+      livenessProbe: {
+        // 通用参数
+        initialDelaySeconds: 0,
+        periodSeconds: 10,
+        timeoutSeconds: 1,
+        successThreshold: 1,
+        failureThreshold: 30,
+        terminationGracePeriodSeconds: 30,
+        // 探测方法
+        exec: { command: [] },
+        tcpSocket: {},
+        httpGet: {
+          httpHeaders: [],
+        },
+        grpc: {},
+      },
+      lifecycle: {
+        postStart: {},
+        preStop: {},
+      },
+    }
+  }
+
   const handleTabsEdit = (targetName, action) => {
     if (action === 'add') {
       const newTabIndex = data.containerItem.length
-      data.containerItem.push({
-        name: `Container-${newTabIndex}`,
-        resources: {
-          requests: {},
-          limits: {},
-        },
-      })
+      const newContainer = getContainerTemplate(newTabIndex)
+      data.containerItem.push(newContainer)
       activeTabsValue.value = newTabIndex
     } else if (action === 'remove') {
       // 如果当前只有一个容器，提示并中止后续删除逻辑
@@ -35,7 +97,6 @@
         ElMessage.error('至少需要保留一个容器')
         return
       }
-
       const tabs = data.containerItem
       let activeName = activeTabsValue.value
 

@@ -2,6 +2,7 @@
   import { reactive } from 'vue'
   import TabOfBasic from './TabOfBasic.vue'
   import TabOfPort from './TabOfPort.vue'
+  import TabOfHealth from '../tabOfHealth/TabOfHealth.vue'
   const data = reactive({
     activeName: 'Basic',
   })
@@ -16,7 +17,9 @@
     <el-tab-pane label="端口配置" name="Port">
       <TabOfPort style="padding: 10px 30px" :container-item="props.containerItem" />
     </el-tab-pane>
-    <el-tab-pane label="健康检查" name="Health">Health</el-tab-pane>
+    <el-tab-pane label="健康检查" name="Health">
+      <TabOfHealth :container-item="props.containerItem" />
+    </el-tab-pane>
     <el-tab-pane label="环境变量" name="Env">Env</el-tab-pane>
     <el-tab-pane label="存储配置" name="Volume">Volume</el-tab-pane>
     <el-tab-pane label="生命周期" name="LifeCycle">LifeCycle</el-tab-pane>

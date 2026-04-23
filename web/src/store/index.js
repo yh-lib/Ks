@@ -1,6 +1,7 @@
 // 如何从pinia中提取数据？
 // step1: 安装pinia
 import { defineStore } from 'pinia'
+import TcpSocket from '../view/components/workLoads/tabOfHealth/TcpSocket.vue'
 
 const defaultWorkLoadItem = () => ({
   clusterId: '',
@@ -35,13 +36,58 @@ const defaultWorkLoadItem = () => ({
               env: [],
               envFrom: [],
               volumeMounts: [],
-              livenessProbe: {},
               resources: {
                 requests: {},
                 limits: {},
               },
-              readinessProbe: {},
-              startupProbe: {},
+              startupProbe: {
+                // 通用参数
+                initialDelaySeconds: 0,
+                periodSeconds: 10,
+                timeoutSeconds: 1,
+                successThreshold: 1,
+                failureThreshold: 30,
+                terminationGracePeriodSeconds: 30,
+                // 探测方法
+                exec: { command: '' },
+                tcpSocket: {},
+                httpGet: {
+                  httpHeaders: [],
+                },
+                grpc: {},
+              },
+              readinessProbe: {
+                // 通用参数
+                initialDelaySeconds: 0,
+                periodSeconds: 10,
+                timeoutSeconds: 1,
+                successThreshold: 1,
+                failureThreshold: 30,
+                terminationGracePeriodSeconds: 30,
+                // 探测方法
+                exec: { command: [] },
+                tcpSocket: {},
+                httpGet: {
+                  httpHeaders: [],
+                },
+                grpc: {},
+              },
+              livenessProbe: {
+                // 通用参数
+                initialDelaySeconds: 0,
+                periodSeconds: 10,
+                timeoutSeconds: 1,
+                successThreshold: 1,
+                failureThreshold: 30,
+                terminationGracePeriodSeconds: 30,
+                // 探测方法
+                exec: { command: [] },
+                tcpSocket: {},
+                httpGet: {
+                  httpHeaders: [],
+                },
+                grpc: {},
+              },
               lifecycle: {
                 postStart: {},
                 preStop: {},
