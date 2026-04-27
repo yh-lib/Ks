@@ -49,12 +49,12 @@ const defaultWorkLoadItem = () => ({
               },
               startupProbe: {
                 // 通用参数
-                initialDelaySeconds: 0,
-                periodSeconds: 10,
-                timeoutSeconds: 1,
-                successThreshold: 1,
-                failureThreshold: 30,
-                terminationGracePeriodSeconds: 30,
+                initialDelaySeconds: null,
+                periodSeconds: null,
+                timeoutSeconds: null,
+                successThreshold: null,
+                failureThreshold: null,
+                terminationGracePeriodSeconds: null,
                 // 探测方法
                 exec: { command: '' },
                 tcpSocket: {},
@@ -65,12 +65,12 @@ const defaultWorkLoadItem = () => ({
               },
               readinessProbe: {
                 // 通用参数
-                initialDelaySeconds: 0,
-                periodSeconds: 10,
-                timeoutSeconds: 1,
-                successThreshold: 1,
-                failureThreshold: 30,
-                terminationGracePeriodSeconds: 30,
+                initialDelaySeconds: null,
+                periodSeconds: null,
+                timeoutSeconds: null,
+                successThreshold: null,
+                failureThreshold: null,
+                terminationGracePeriodSeconds: null,
                 // 探测方法
                 exec: { command: [] },
                 tcpSocket: {},
@@ -81,12 +81,12 @@ const defaultWorkLoadItem = () => ({
               },
               livenessProbe: {
                 // 通用参数
-                initialDelaySeconds: 0,
-                periodSeconds: 10,
-                timeoutSeconds: 1,
-                successThreshold: 1,
-                failureThreshold: 30,
-                terminationGracePeriodSeconds: 30,
+                initialDelaySeconds: null,
+                periodSeconds: null,
+                timeoutSeconds: null,
+                successThreshold: null,
+                failureThreshold: null,
+                terminationGracePeriodSeconds: null,
                 // 探测方法
                 exec: { command: [] },
                 tcpSocket: {},
