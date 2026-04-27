@@ -36,6 +36,7 @@ export const API_CONFIG = {
   deploymentGetApi: `${BASE_URL}/deployment/get`,
   deploymentDeleteApi: `${BASE_URL}/deployment/delete`,
   deploymentCreateApi: `${BASE_URL}/deployment/create`,
+  deploymentUpdateApi: `${BASE_URL}/deployment/update`,
   // secret 管理
   secretListApi: `${BASE_URL}/secret/list`,
   secretGetApi: `${BASE_URL}/secret/get`,

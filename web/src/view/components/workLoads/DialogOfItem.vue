@@ -1,6 +1,6 @@
 <script setup>
   import { ref } from 'vue'
-  import { createdeploymentHandler } from '../../../api/deployment'
+  import { createdeploymentHandler, updateDeploymentHandler } from '../../../api/deployment'
   import { ElMessage } from 'element-plus'
   import { list2obj } from '../../../utils/typeConv/type.conv'
   import { useWorkLoadData } from '../../../store'
@@ -14,7 +14,7 @@
   import TabOfContainer from './tabOfContainer/TabOfContainer.vue'
 
   const props = defineProps(['openDialog', 'actionMethod'])
-  const emit = defineEmits(['closeDialog'])
+  const emit = defineEmits(['closeDialog', 'getList'])
   const activeName = ref('Basic')
 
   // 创建ref来获取子组件实例
@@ -45,6 +45,23 @@
           message: res.data.message,
           type: 'success',
         })
+        emit('getList')
+        handleClose()
+      }
+    })
+  }
+  const updateItem = () => {
+    syncToWorkLoadItem()
+    const obj = JSON.parse(JSON.stringify(workLoadItem.value))
+    removeEmptyFieldsDeep(obj)
+    updateDeploymentHandler(obj).then((res) => {
+      if (res.data.status === 200) {
+        ElMessage({
+          message: res.data.message,
+          type: 'success',
+        })
+        emit('getList')
+        handleClose()
       }
     })
   }

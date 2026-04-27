@@ -71,7 +71,7 @@
   >
     <!-- 卡片 main 部分 table 数据 -->
     <template #mainData>
-      <Table :table-data="data" @delete-item="deleteItem"></Table>
+      <Table :table-data="data" @delete-item="deleteItem" @get-list="getList"></Table>
     </template>
   </ElCard>
 
@@ -80,6 +80,7 @@
     v-if="createItemDialogVisible"
     :open-dialog="createItemDialogVisible"
     @close-dialog="closeDialogOfItem"
+    @get-list="getList"
     action-method="create"
   />
 </template>

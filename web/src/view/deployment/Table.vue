@@ -12,7 +12,7 @@
   const store = useWorkLoadData()
   const { workLoadItem } = storeToRefs(store)
 
-  const emit = defineEmits(['deleteItem'])
+  const emit = defineEmits(['deleteItem', 'getList'])
 
   const getAgeText = (row) => {
     const creationTimestamp = row?.metadata?.creationTimestamp
@@ -65,6 +65,10 @@
 
   const mergeIfExists = (target, source) => {
     Object.keys(source || {}).forEach((key) => {
+      if (!(key in target)) {
+        return
+      }
+
       const sourceValue = source[key]
       const targetValue = target[key]
 
@@ -74,26 +78,31 @@
 
       if (Array.isArray(sourceValue)) {
         if (!Array.isArray(targetValue)) {
-          target[key] = sourceValue
           return
         }
 
-        target[key] = sourceValue.map((item, index) => {
-          const currentTargetItem = targetValue[index]
+        target[key] = sourceValue
+          .map((item, index) => {
+            const currentTargetItem = targetValue[index]
 
-          if (
-            item &&
-            typeof item === 'object' &&
-            !Array.isArray(item) &&
-            currentTargetItem &&
-            typeof currentTargetItem === 'object' &&
-            !Array.isArray(currentTargetItem)
-          ) {
-            return mergeIfExists(currentTargetItem, item)
-          }
+            if (currentTargetItem === undefined) {
+              return currentTargetItem
+            }
 
-          return item
-        })
+            if (
+              item &&
+              typeof item === 'object' &&
+              !Array.isArray(item) &&
+              currentTargetItem &&
+              typeof currentTargetItem === 'object' &&
+              !Array.isArray(currentTargetItem)
+            ) {
+              return mergeIfExists(currentTargetItem, item)
+            }
+
+            return currentTargetItem === undefined ? currentTargetItem : item
+          })
+          .filter((item) => item !== undefined)
         return
       }
 
@@ -117,7 +126,6 @@
 
   const updateItem = (row) => {
     store.resetWorkLoadItem()
-    console.log('编辑Item:::', workLoadItem.value)
     // 数据赋值
     getdeploymentHandler(
       props.tableData.clusterId,
@@ -125,6 +133,7 @@
       row.metadata.name
     ).then((res) => {
       if (res.data.status == 200) {
+        workLoadItem.value.name = row.metadata.name
         mergeIfExists(workLoadItem.value.item, res.data.data.items)
         data.actionMethod = 'update'
         data.updateItemDialogVisible = true
@@ -138,6 +147,7 @@
   })
   const closeDialogOfItem = () => {
     data.updateItemDialogVisible = false
+    emit('getList')
   }
 </script>
 
@@ -197,5 +207,6 @@
     :open-dialog="data.updateItemDialogVisible"
     @close-dialog="closeDialogOfItem"
     :actionMethod="data.actionMethod"
+    @get-list="emit('getList')"
   />
 </template>

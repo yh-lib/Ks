@@ -21,7 +21,7 @@ export const createdeploymentHandler = (itemForm) => {
   return request(API_CONFIG.deploymentCreateApi, itemForm, 'post')
 }
 
-// // 更新 deployment
-// export const updatedeploymentHandler = (deploymentInfo) => {
-//     return request(API_CONFIG.deploymentUpdateApi, deploymentInfo, 'post')
-// }
+// 更新 deployment
+export const updateDeploymentHandler = (itemFrom) => {
+  return request(API_CONFIG.deploymentUpdateApi, itemFrom, 'post')
+}
