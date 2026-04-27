@@ -13,7 +13,7 @@
   import TabOfVolumeConfig from './tabOfVolumeConfig/tabOfVolumeConfig.vue'
   import TabOfContainer from './tabOfContainer/TabOfContainer.vue'
 
-  const props = defineProps(['openDialog'])
+  const props = defineProps(['openDialog', 'actionMethod'])
   const emit = defineEmits(['closeDialog'])
   const activeName = ref('Basic')
 
@@ -175,8 +175,18 @@
       size="large"
       style="margin-top: 20px; width: 90px"
       @click="createItem"
+      v-if="props.actionMethod == 'create'"
     >
       创建
+    </el-button>
+    <el-button
+      type="primary"
+      size="large"
+      style="margin-top: 20px; width: 90px"
+      @click="updateItem"
+      v-if="props.actionMethod == 'update'"
+    >
+      更新
     </el-button>
   </el-dialog>
 </template>

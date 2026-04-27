@@ -125,9 +125,8 @@
       row.metadata.name
     ).then((res) => {
       if (res.data.status == 200) {
-        console.log('数据核对1:', workLoadItem.value)
         mergeIfExists(workLoadItem.value.item, res.data.data.items)
-        console.log('数据核对2:', workLoadItem.value.item.spec.template.spec.imagePullSecrets)
+        data.actionMethod = 'update'
         data.updateItemDialogVisible = true
       }
     })
@@ -135,6 +134,7 @@
 
   const data = reactive({
     updateItemDialogVisible: false,
+    actionMethod: '',
   })
   const closeDialogOfItem = () => {
     data.updateItemDialogVisible = false
@@ -193,5 +193,9 @@
       />
     </template>
   </DialogByYaml> -->
-  <DialogOfItem :open-dialog="data.updateItemDialogVisible" @close-dialog="closeDialogOfItem" />
+  <DialogOfItem
+    :open-dialog="data.updateItemDialogVisible"
+    @close-dialog="closeDialogOfItem"
+    :actionMethod="data.actionMethod"
+  />
 </template>

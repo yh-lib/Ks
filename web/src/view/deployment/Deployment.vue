@@ -80,5 +80,6 @@
     v-if="createItemDialogVisible"
     :open-dialog="createItemDialogVisible"
     @close-dialog="closeDialogOfItem"
+    action-method="create"
   />
 </template>
