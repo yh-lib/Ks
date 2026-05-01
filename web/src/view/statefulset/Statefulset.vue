@@ -3,19 +3,19 @@
   import Table from './Table.vue'
   import { reactive, ref } from 'vue'
   import { ElMessage, ElMessageBox } from 'element-plus'
-  import { getdeploymentListHandler, deletedeploymentHandler } from '../../api/deployment'
   import DialogOfItem from '../components/workLoads/DialogOfItem.vue'
+  import { deleteStatefulSetHandler, getStatefulSetListHandler } from '../../api/statefuleSet'
 
-  // 删除 deployment
+  // 删除 statefulSet
   const deleteItem = (row) => {
     // 删除提醒
-    ElMessageBox.confirm('确认删除 deployment :  ' + row.metadata.name, {
+    ElMessageBox.confirm('确认删除 statefulSet :  ' + row.metadata.name, {
       confirmButtonText: '确认',
       cancelButtonText: '取消',
       type: 'warning',
     })
       .then(() => {
-        deletedeploymentHandler(data.clusterId, data.nameSpace, row.metadata.name).then((res) => {
+        deleteStatefulSetHandler(data.clusterId, data.nameSpace, row.metadata.name).then((res) => {
           if (res.data.status == 200) {
             ElMessage({
               type: 'success',
@@ -36,7 +36,7 @@
       data.items = []
       return
     }
-    getdeploymentListHandler(data.clusterId, data.nameSpace).then((res) => {
+    getStatefulSetListHandler(data.clusterId, data.nameSpace).then((res) => {
       data.items = res.data.data.items || []
     })
   }

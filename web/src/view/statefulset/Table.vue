@@ -169,7 +169,9 @@
     <el-table-column label="命名空间" prop="metadata.namespace" />
     <el-table-column label="状态" prop="status">
       <template #default="scope">
-        <span v-if="scope.row.status.conditions[0].status == 'True'" style="color: green"
+        <span
+          v-if="scope.row.status.availableReplicas == scope.row.status.replicas"
+          style="color: green"
           >Available</span
         >
         <span v-else style="color: red">UnAvailable</span>

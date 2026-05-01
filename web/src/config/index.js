@@ -37,6 +37,12 @@ export const API_CONFIG = {
   deploymentDeleteApi: `${BASE_URL}/deployment/delete`,
   deploymentCreateApi: `${BASE_URL}/deployment/create`,
   deploymentUpdateApi: `${BASE_URL}/deployment/update`,
+  // statefulSet 管理
+  statefulSetListApi: `${BASE_URL}/statefulSet/list`,
+  statefulSetGetApi: `${BASE_URL}/statefulSet/get`,
+  statefulSetDeleteApi: `${BASE_URL}/statefulSet/delete`,
+  statefulSetCreateApi: `${BASE_URL}/statefulSet/create`,
+  statefulSetUpdateApi: `${BASE_URL}/statefulSet/update`,
   // secret 管理
   secretListApi: `${BASE_URL}/secret/list`,
   secretGetApi: `${BASE_URL}/secret/get`,
