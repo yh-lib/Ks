@@ -130,10 +130,12 @@ func KubectlFunc(c *gin.Context, resourceType string, opMethod string) {
 		info               Info
 		gracePeriodSeconds int64
 		// 资源类型
-		node       corev1.Node
-		namespace  corev1.Namespace
-		pod        corev1.Pod
-		deployment appsv1.Deployment
+		node        corev1.Node
+		namespace   corev1.Namespace
+		pod         corev1.Pod
+		deployment  appsv1.Deployment
+		statefulSet appsv1.StatefulSet
+		daemonset   appsv1.DaemonSet
 		// 存储资源
 		configMap corev1.ConfigMap
 		secret    corev1.Secret
@@ -150,6 +152,10 @@ func KubectlFunc(c *gin.Context, resourceType string, opMethod string) {
 		info.Item = &pod
 	case "deployment":
 		info.Item = &deployment
+	case "statefulSet":
+		info.Item = &statefulSet
+	case "daemonset":
+		info.Item = &daemonset
 	// 存储资源
 	case "configMap":
 		info.Item = &configMap
@@ -173,6 +179,10 @@ func KubectlFunc(c *gin.Context, resourceType string, opMethod string) {
 		kubeUtilser = kubeutils.NewPod(kubeconfig, &pod)
 	case "deployment":
 		kubeUtilser = kubeutils.NewDeployment(kubeconfig, &deployment)
+	case "statefulSet":
+		kubeUtilser = kubeutils.NewStatefulSet(kubeconfig, &statefulSet)
+	case "daemonset":
+		kubeUtilser = kubeutils.NewDaemonSet(kubeconfig, &daemonset)
 	// 存储资源
 	case "configMap":
 		kubeUtilser = kubeutils.NewConfigMap(kubeconfig, &configMap)
