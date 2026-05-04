@@ -20,8 +20,8 @@ export const workloadsRoutes = {
       component: () => import('../view/daemonset/Daemonset.vue'),
     },
     {
-      path: 'job',
-      component: () => import('../view/job/Job.vue'),
+      path: 'cronJob',
+      component: () => import('../view/cronJob/cronJob.vue'),
     },
   ],
 }

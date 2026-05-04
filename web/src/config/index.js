@@ -66,6 +66,11 @@ export const API_CONFIG = {
   serviceDeleteApi: `${BASE_URL}/service/delete`,
   serviceCreateApi: `${BASE_URL}/service/create`,
   serviceUpdateApi: `${BASE_URL}/service/update`,
+  // cronJob 管理
+  cronJobListApi: `${BASE_URL}/cronJob/list`,
+  cronJobGetApi: `${BASE_URL}/cronJob/get`,
+  cronJobDeleteApi: `${BASE_URL}/cronJob/delete`,
+  cronJobCreateApi: `${BASE_URL}/cronJob/create`,
 }
 
 export const CONFIG = {

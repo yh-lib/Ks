@@ -54,8 +54,8 @@ export const MENU_CONFIG = [
         icon: 'Lock', // 盾牌代表守护/安全
       },
       {
-        title: '任务与定时任务 (Job)',
-        index: '/workloads/job',
+        title: '定时任务 (cronJob)',
+        index: '/workloads/cronJob',
         icon: 'Timer', // 定时器代表任务
       },
     ],
