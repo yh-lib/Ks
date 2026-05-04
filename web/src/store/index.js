@@ -8,8 +8,8 @@ const defaultWorkLoadItem = () => ({
   nameSpace: '',
   name: '',
   item: {
-    kind: 'Deployment',
-    apiVersion: 'apps/v1',
+    kind: '',
+    apiVersion: '',
     metadata: {
       name: '',
       namespace: '',
@@ -17,11 +17,119 @@ const defaultWorkLoadItem = () => ({
       annotations: {},
     },
     spec: {
+      // cronjob 配置
+      schedule: '',
+      jobTemplate: {
+        spec: {
+          parallelism: null,
+          completions: null,
+          template: {
+            metadata: {
+              labels: {},
+              annotations: {},
+            },
+            spec: {
+              serviceName: '',
+              nodeSelector: {},
+              hostNetwork: null,
+              containers: [
+                {
+                  name: '',
+                  image: '',
+                  imagePullPolicy: '',
+                  ports: [],
+                  env: [],
+                  envFrom: [],
+                  volumeMounts: [],
+                  resources: {
+                    requests: {
+                      cpu: '',
+                      memory: '',
+                    },
+                    limits: {
+                      cpu: '',
+                      memory: '',
+                    },
+                  },
+                  startupProbe: {
+                    // 通用参数
+                    initialDelaySeconds: null,
+                    periodSeconds: null,
+                    timeoutSeconds: null,
+                    successThreshold: null,
+                    failureThreshold: null,
+                    terminationGracePeriodSeconds: null,
+                    // 探测方法
+                    exec: { command: '' },
+                    tcpSocket: {},
+                    httpGet: {
+                      httpHeaders: [],
+                    },
+                    grpc: {},
+                  },
+                  readinessProbe: {
+                    // 通用参数
+                    initialDelaySeconds: null,
+                    periodSeconds: null,
+                    timeoutSeconds: null,
+                    successThreshold: null,
+                    failureThreshold: null,
+                    terminationGracePeriodSeconds: null,
+                    // 探测方法
+                    exec: { command: [] },
+                    tcpSocket: {},
+                    httpGet: {
+                      httpHeaders: [],
+                    },
+                    grpc: {},
+                  },
+                  livenessProbe: {
+                    // 通用参数
+                    initialDelaySeconds: null,
+                    periodSeconds: null,
+                    timeoutSeconds: null,
+                    successThreshold: null,
+                    failureThreshold: null,
+                    terminationGracePeriodSeconds: null,
+                    // 探测方法
+                    exec: { command: [] },
+                    tcpSocket: {},
+                    httpGet: {
+                      httpHeaders: [],
+                    },
+                    grpc: {},
+                  },
+                  lifecycle: {
+                    postStart: {},
+                    preStop: {},
+                  },
+                },
+              ],
+              volumes: [],
+              restartPolicy: '',
+              terminationGracePeriodSeconds: null,
+              dnsPolicy: '',
+              securityContext: {},
+              schedulerName: '',
+              tolerations: [],
+              imagePullSecrets: [{ name: '' }],
+            },
+          },
+        },
+      },
+      successfulJobsHistoryLimit: null,
+      failedJobsHistoryLimit: null,
+      startingDeadlineSeconds: null,
+      concurrencyPolicy: '',
+      suspend: null,
+      activeDeadlineSeconds: null,
+      backoffLimit: null,
+      ttlSecondsAfterFinished: null,
+      // schedule 配置
       replicas: null,
       selector: {
         matchLabels: {},
       },
-      // pod 配置
       template: {
         metadata: {
           labels: {},
@@ -114,7 +222,6 @@ const defaultWorkLoadItem = () => ({
           imagePullSecrets: [{ name: '' }],
         },
       },
-      // 更新 配置
       strategy: {
         type: '',
         rollingUpdate: {},

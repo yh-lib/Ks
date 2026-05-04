@@ -10,6 +10,7 @@
   import { getServiceListHandler } from '../../../../api/service'
   import Daemonset from '../../../daemonset/Daemonset.vue'
   import { obj2list } from '../../../../utils/typeConv/type.conv'
+  import CronJob from '../../../cronJob/cronJob.vue'
 
   // store from pinia
   const store = useWorkLoadData()
@@ -158,7 +159,21 @@
   }
 
   onBeforeMount(() => {
+    // kind
     workLoadItem.value.item.kind = props.resourceType
+    // apiversion
+    switch (props.resourceType) {
+      case 'Deployment':
+      case 'StatefulSet':
+      case 'DaemonSet':
+        workLoadItem.value.item.apiVersion = 'apps/v1'
+        break
+      case 'CronJob':
+        workLoadItem.value.item.apiVersion = 'batch/v1'
+        break
+      default:
+        break
+    }
     data.labelsAndAnnotationsSwtich = ''
     if (props.actionMethod == 'create') {
       data.labelsAndAnnotationsSwtich = 'auto'
@@ -184,7 +199,7 @@
       <el-form label-width="150px" label-position="left" style="height: 450px; width: 1490px">
         <el-row :gutter="100">
           <!-- 名称 -->
-          <el-col :span="8" class="form-item">
+          <el-col :span="8">
             <el-form-item label="名称" required>
               <el-input
                 placeholder="请输入资源名称"
@@ -197,7 +212,6 @@
           <!-- 副本数 -->
           <el-col
             :span="8"
-            class="form-item"
             v-if="props.resourceType == 'Deployment' || props.resourceType == 'StatefulSet'"
           >
             <el-form-item label="副本数">
@@ -208,7 +222,7 @@
             </el-form-item>
           </el-col>
           <!-- 镜像地址 -->
-          <el-col :span="8" class="form-item">
+          <el-col :span="8">
             <el-form-item label="镜像地址" required>
               <el-input
                 placeholder="请输入镜像地址"
@@ -217,7 +231,7 @@
             </el-form-item>
           </el-col>
           <!-- 镜像拉取策略 -->
-          <el-col :span="8" class="form-item">
+          <el-col :span="8">
             <el-form-item label="镜像拉取策略">
               <el-select
                 placeholder="请选择镜像拉取策略"
@@ -232,8 +246,28 @@
               </el-select>
             </el-form-item>
           </el-col>
+          <!-- 重启策略 -->
+          <el-col :span="8" v-if="props.resourceType == 'CronJob'">
+            <el-form-item label="重启策略" required>
+              <el-select
+                placeholder="请选择重启策略"
+                v-model="workLoadItem.item.spec.template.spec.restartPolicy"
+              >
+                <el-option
+                  v-for="item in [
+                    { label: '无论容器退出状态如何，总是重启', value: 'Always' },
+                    { label: '只有容器退出状态非 0 时才重启', value: 'OnFailure' },
+                    { label: '从不重启', value: 'Never' },
+                  ]"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
           <!-- 私有仓库密钥 -->
-          <el-col :span="8" class="form-item">
+          <el-col :span="8">
             <el-form-item label="私有仓库密钥">
               <el-select
                 placeholder="请选择私有仓库密钥"
@@ -249,7 +283,7 @@
             </el-form-item>
           </el-col>
           <!-- DNS 策略 -->
-          <el-col :span="8" class="form-item">
+          <el-col :span="8">
             <el-form-item label="DNS 策略">
               <el-select
                 placeholder="请选择 DNS 策略"
@@ -264,8 +298,77 @@
               </el-select>
             </el-form-item>
           </el-col>
+          <!-- 调度周期 -->
+          <el-col :span="8">
+            <el-form-item label="调度周期" required>
+              <el-input placeholder="请配置调度周期" v-model="workLoadItem.item.spec.schedule" />
+            </el-form-item>
+          </el-col>
+          <!-- 并发策略 -->
+          <el-col :span="8">
+            <el-form-item label="并发策略">
+              <el-select
+                placeholder="请选择并发策略"
+                v-model="workLoadItem.item.spec.concurrencyPolicy"
+                @change="
+                  workLoadItem.item.spec.concurrencyPolicy != 'Allow' &&
+                    (workLoadItem.item.spec.parallelism = null)
+                "
+              >
+                <el-option
+                  v-for="item in [
+                    { label: '允许同时运行多个任务实例', value: 'Allow' },
+                    { label: '禁止同时运行多个任务实例', value: 'Forbid' },
+                    { label: '用新任务替换正在运行的任务', value: 'Replace' },
+                  ]"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <!-- Job -->
+          <el-col :span="8" v-if="workLoadItem.item.spec.concurrencyPolicy == 'Allow'">
+            <el-form-item label="Job启动pod并行数量">
+              <el-input-number
+                v-model="workLoadItem.item.spec.jobTemplate.spec.parallelism"
+                :min="1"
+              />
+            </el-form-item>
+          </el-col>
+          <!-- 并发数量 -->
+          <el-col :span="8" v-if="workLoadItem.item.spec.concurrencyPolicy == 'Allow'">
+            <el-form-item label="Job成功阈值">
+              <el-input-number
+                v-model="workLoadItem.item.spec.jobTemplate.spec.completions"
+                :min="1"
+              />
+            </el-form-item>
+          </el-col>
+          <!-- 保留成功的 Job 数量 -->
+          <el-col :span="8" v-if="props.resourceType == 'CronJob'">
+            <el-form-item label="保留成功的 Job 数量">
+              <el-input-number
+                :min="1"
+                v-model="workLoadItem.item.spec.successfulJobsHistoryLimit"
+              />
+            </el-form-item>
+          </el-col>
+          <!-- 保留失败的 Job 数量 -->
+          <el-col :span="8" v-if="props.resourceType == 'CronJob'">
+            <el-form-item label="保留失败的 Job 数量">
+              <el-input-number :min="1" v-model="workLoadItem.item.spec.failedJobsHistoryLimit" />
+            </el-form-item>
+          </el-col>
+          <!-- 暂停调度 -->
+          <el-col :span="8" v-if="props.resourceType == 'CronJob'">
+            <el-form-item label="暂停调度">
+              <el-switch v-model="workLoadItem.item.spec.suspend" />
+            </el-form-item>
+          </el-col>
           <!-- 更新策略 -->
-          <el-col :span="8" class="form-item">
+          <el-col :span="8" v-if="props.resourceType != 'CronJob'">
             <el-form-item label="更新策略">
               <!-- 资源类型为deployment时 -->
               <el-select
@@ -300,7 +403,6 @@
           <!-- 更新策略 参数 -->
           <el-col
             :span="8"
-            class="form-item"
             v-if="
               workLoadItem.item.spec.strategy.type == 'RollingUpdate' ||
               workLoadItem.item.spec.updateStrategy.type == 'RollingUpdate'
@@ -361,7 +463,7 @@
             </div>
           </el-col>
           <!-- 使用宿主机网络 -->
-          <el-col :span="8" class="form-item">
+          <el-col :span="8" v-if="props.resourceType != 'CronJob'">
             <el-form-item label="使用宿主机网络">
               <el-switch
                 v-model="workLoadItem.item.spec.template.spec.hostNetwork"
@@ -371,7 +473,7 @@
             </el-form-item>
           </el-col>
           <!-- 标签及注释 -->
-          <el-col :span="8" class="form-item">
+          <el-col :span="8">
             <el-form-item label="标签及注释">
               <el-radio-group v-model="data.labelsAndAnnotationsSwtich">
                 <el-radio value="auto" size="large">自动生成</el-radio>
@@ -380,7 +482,7 @@
             </el-form-item>
           </el-col>
           <!-- 自动添加 Servcie -->
-          <el-col :span="8" class="form-item">
+          <el-col :span="8">
             <el-form-item label="自动添加 Servcie" v-if="props.resourceType == 'Deployment'">
               <el-switch v-model="data.switchAddService" />
             </el-form-item>

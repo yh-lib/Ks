@@ -15,6 +15,7 @@
   import Deployment from '../../deployment/Deployment.vue'
   import { createStatefulSetHandler } from '../../../api/statefuleSet'
   import { createDaemonSetHandler } from '../../../api/daemonSet'
+  import { createCronJobHandler } from '../../../api/cronJob'
 
   const props = defineProps(['openDialog', 'actionMethod', 'resourceType'])
   const emit = defineEmits(['closeDialog', 'getList'])
@@ -68,8 +69,24 @@
         })
         break
       case 'DaemonSet':
-        // 调用后端接口 创建 statefulSet
+        // 调用后端接口 创建 DaemonSet
         createDaemonSetHandler(getPostData(workLoadItem.value)).then((res) => {
+          if (res.data.status === 200) {
+            ElMessage({
+              message: res.data.message,
+              type: 'success',
+            })
+            emit('getList')
+            handleClose()
+          }
+        })
+        break
+      case 'CronJob':
+        // 调用后端接口 创建 CronJob
+        const sourceData = JSON.parse(JSON.stringify(workLoadItem.value))
+        delete sourceData.item.spec.template
+
+        createCronJobHandler(getPostData(sourceData)).then((res) => {
           if (res.data.status === 200) {
             ElMessage({
               message: res.data.message,
@@ -159,13 +176,20 @@
     // 同步数据至模板
     syncToWorkLoadItem()
     // 转换模板数据为yaml
-    itemOfYaml.value = obj2yaml(getPostData(workLoadItem.value.item))
+    if (props.resourceType == 'CronJob') {
+      const sourceData = JSON.parse(JSON.stringify(workLoadItem.value.item))
+      delete sourceData.spec.template
+      itemOfYaml.value = obj2yaml(getPostData(sourceData))
+    } else {
+      itemOfYaml.value = obj2yaml(getPostData(workLoadItem.value.item))
+    }
   }
   // 同步子组件数据至模板
   const syncToWorkLoadItem = () => {
     // 基本配置组件：  标签 注释
     if (basicRef.value.data.labelsAndAnnotationsSwtich == 'auto') {
       // 自动生成
+      workLoadItem.value.item.metadata.labels = {}
       workLoadItem.value.item.metadata.labels.app = workLoadItem.value.item.metadata.name
       workLoadItem.value.item.spec.selector.matchLabels.app = workLoadItem.value.item.metadata.name
       workLoadItem.value.item.spec.template.metadata.labels.app =
@@ -190,6 +214,10 @@
     workLoadItem.value.item.spec.template.spec.volumes.forEach((item) => {
       item?.emptyDir?.medium == 'Disk' && delete item.emptyDir.medium
     })
+    // cronJob 数据修正
+    if (props.resourceType == 'CronJob') {
+      workLoadItem.value.item.spec.jobTemplate.spec.template = workLoadItem.value.item.spec.template
+    }
   }
 </script>
 
