@@ -1,12 +1,5 @@
 <script lang="ts" setup>
-  import { computed, reactive, ref, onBeforeMount, effect } from 'vue'
-  import {
-    getNamespaceListHandler as getListHandler,
-    getNamespaceHandler as getHandler,
-    deleteNamespaceHandler as deleteHandler,
-    createNamespaceHandler as createHandler,
-  } from '../../api/namespace.js'
-  import { getClusterListHandler } from '../../api/cluster.js'
+  import { computed, reactive, ref, onBeforeMount } from 'vue'
   import { ElSelect, ElMessage, ElMessageBox } from 'element-plus'
   import { list2obj, obj2list } from '../../utils/typeConv/type.conv.js'
   import request from '../../api/axiosEncap.js'
@@ -220,7 +213,7 @@
 
   // 获取集群列表
   const getclusterOptions = async () => {
-    await getClusterListHandler().then((res) => {
+    await getListHandler('', '', 'cluster').then((res) => {
       if (res.data.status === 200) {
         data.clusterOptions = res.data.data.items
         console.log('获取集群列表:::', data.clusterOptions)

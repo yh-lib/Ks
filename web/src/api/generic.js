@@ -6,8 +6,6 @@ const BASE_URL = import.meta.env.VITE_BASE_URL
 // create
 export const createHandler = (resourceType, itemForm) => {
   const fullUrl = BASE_URL + '/' + resourceType + '/' + 'create'
-  console.log('执行创建逻辑', itemForm)
-
   return request(fullUrl, itemForm, 'post')
 }
 // delete

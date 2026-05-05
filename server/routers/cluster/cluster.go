@@ -6,11 +6,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func add(clusterGroup *gin.RouterGroup) {
-	clusterGroup.POST("/add", cluster.Add)
+func create(clusterGroup *gin.RouterGroup) {
+	clusterGroup.POST("/create", cluster.Create)
 }
 func delete(clusterGroup *gin.RouterGroup) {
-	clusterGroup.GET("/delete", cluster.Delete)
+	clusterGroup.POST("/delete", cluster.Delete)
 }
 func update(clusterGroup *gin.RouterGroup) {
 	clusterGroup.POST("/update", cluster.Update)
@@ -25,7 +25,7 @@ func list(clusterGroup *gin.RouterGroup) {
 func RegisterSubRouter(g *gin.RouterGroup) {
 	// 配置登录功能的路由策略
 	clusterGroup := g.Group("cluster")
-	add(clusterGroup)
+	create(clusterGroup)
 	delete(clusterGroup)
 	update(clusterGroup)
 	get(clusterGroup)

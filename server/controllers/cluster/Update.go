@@ -8,5 +8,5 @@ import (
 
 func Update(c *gin.Context) {
 	logs.Info(nil, "开始运行集群更新逻辑")
-	addOrUpdate(c, "update")
+	createOrUpdate(c, "update")
 }

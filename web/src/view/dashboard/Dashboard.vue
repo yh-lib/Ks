@@ -1,9 +1,7 @@
 <script setup>
   import { computed, ref, onBeforeMount, reactive } from 'vue'
   import { Refresh, CircleCheckFilled, WarningFilled } from '@element-plus/icons-vue'
-  import { getClusterListHandler } from '../../api/cluster'
-
-  // ++++++++++++++++++++++++++++++++++++++++++
+  import { getListHandler } from '../../api/generic'
 
   onBeforeMount(async () => {
     await getClusterList()
@@ -18,7 +16,7 @@
 
   // 获取集群列表
   const getClusterList = async () => {
-    await getClusterListHandler().then((res) => {
+    await getListHandler('', '', 'cluster').then((res) => {
       if (res.data.status === 200) {
         data.clusterItems = res.data.data.items // 获取集群列表
         data.curClusterId = data.clusterItems[0].clusterId // 默认集群ID

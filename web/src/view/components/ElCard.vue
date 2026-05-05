@@ -2,11 +2,11 @@
   import { ElSelect } from 'element-plus'
   import { Refresh } from '@element-plus/icons-vue'
   import { onBeforeMount, reactive } from 'vue'
-  import { getClusterListHandler } from '../../api/cluster.js'
   import { getNamespaceListHandler } from '../../api/namespace.js'
   // store from pinia
   import { useWorkLoadData } from '../../store'
   import { storeToRefs } from 'pinia'
+  import { getListHandler } from '../../api/generic.js'
 
   // store from pinia
   const store = useWorkLoadData()
@@ -81,7 +81,7 @@
 
   // 获取集群列表
   const getclusterOptions = async () => {
-    await getClusterListHandler().then((res) => {
+    await getListHandler('', '', 'cluster').then((res) => {
       if (res.data.status === 200) {
         data.clusterOptions = res.data.data.items || []
       }

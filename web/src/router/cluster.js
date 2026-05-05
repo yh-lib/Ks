@@ -5,7 +5,7 @@ export const clusterRoutes = {
   children: [
     {
       path: 'dashboard',
-      component: () => import('../view/cluster/Dashboard.vue'),
+      component: () => import('../view/dashboard/Dashboard.vue'),
     },
     {
       path: 'list',
@@ -13,7 +13,7 @@ export const clusterRoutes = {
     },
     {
       path: 'events',
-      component: () => import('../view/cluster/Events.vue'),
+      component: () => import('../view/event/Events.vue'),
     },
   ],
 }

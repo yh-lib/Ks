@@ -55,15 +55,16 @@ func (c *ClusterConfig) getClusterStatus() (ClusterStatus, error) {
 	clusterVersion := serverVersion.String()
 	clusterStatus.Version = clusterVersion
 	clusterStatus.Status = "Active"
+
 	return clusterStatus, nil
 }
 
 // 添加或更新集群信息
-func addOrUpdate(c *gin.Context, method string) {
+func createOrUpdate(c *gin.Context, method string) {
 	// 定义存放返回前端数据的变量
 	var returnData = config.NewRetrunData()
 	var arg string
-	if method == "add" {
+	if method == "create" {
 		arg = "添加"
 	} else {
 		arg = "更新"
@@ -102,7 +103,7 @@ func addOrUpdate(c *gin.Context, method string) {
 	clusterConfigSectet.StringData["kubeconfig"] = clusterConfig.Kubeconfig
 	// step1	核心操作	创建 secret
 	var secret *corev1.Secret
-	if method == "add" {
+	if method == "create" {
 		secret, err = config.InClusterClientSet.CoreV1().Secrets(config.MetadataNamespace).Create(context.TODO(), &clusterConfigSectet, metav1.CreateOptions{})
 		if err != nil {
 			logs.Error(map[string]any{"集群别名": clusterConfig.Alias, "集群ID": clusterConfig.Id, "ERROR": err.Error()}, "集群添加失败")

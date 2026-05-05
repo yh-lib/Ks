@@ -9,10 +9,24 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+type RequestBody struct {
+	ClusterId string `json:"clusterId"`
+}
+
 func Delete(c *gin.Context) {
 	// 定义存放返回前端数据的变量
 	var returnData = config.NewRetrunData()
-	clusterId := c.Query("clusterId")
+
+	// 接受前端提交的信息，并存放到一个结构体中
+	clusterConfig := RequestBody{}
+	if err := c.ShouldBindJSON(&clusterConfig); err != nil {
+		msg := err.Error()
+		returnData.Status = 400
+		returnData.Message = msg
+		c.JSON(200, returnData)
+		return
+	}
+	clusterId := clusterConfig.ClusterId
 	// 禁止删除基础设施集群
 	if config.ProtectCluster[clusterId] {
 		returnData.Status = 403
