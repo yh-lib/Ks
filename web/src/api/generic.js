@@ -27,6 +27,5 @@ export const getListHandler = (clusterId, nameSpace, resourceType) => {
 }
 export const getHandler = (clusterId, nameSpace, resourceType, name) => {
   const fullUrl = BASE_URL + '/' + resourceType + '/' + 'get'
-  console.log('请求参数：：：', clusterId, nameSpace, name)
   return request(fullUrl, { clusterId, nameSpace, name }, 'get')
 }

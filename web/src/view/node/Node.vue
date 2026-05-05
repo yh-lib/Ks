@@ -1,15 +1,11 @@
 <script lang="ts" setup>
-  import { computed, reactive, ref, onBeforeMount, effect } from 'vue'
-  import {
-    getnodeListHandler as getListHandler,
-    getnodeHandler as getHandler,
-  } from '../../api/node.js'
-  import { getClusterListHandler } from '../../api/cluster.js'
+  import { computed, reactive, onBeforeMount } from 'vue'
   import { ElSelect, ElMessage } from 'element-plus'
   import { list2obj, obj2list } from '../../utils/typeConv/type.conv.js'
   import request from '../../api/axiosEncap.js'
   import { API_CONFIG } from '../../config/index.js'
   import ElCard from '../components/ElCard.vue'
+  import { getHandler, getListHandler } from '../../api/generic.js'
 
   // 需要的数据变量
   const data = reactive({
@@ -142,7 +138,7 @@
     data.curHostName = row.metadata.name
     data.nodeTaints = Array.isArray(row.spec?.taints) ? [...row.spec.taints] : []
     // 获取节点详情
-    getHandler(data.curClusterId, data.curHostName).then((res) => {
+    getHandler(data.curClusterId, '', 'node', data.curHostName).then((res) => {
       data.item = res.data.data.items
       // console.log("获取节点污点：：：:",data.nodeTaints)
       data.opDialog = true
@@ -175,14 +171,18 @@
 
   // 获取当前集群Node列表
   const getList = () => {
-    getListHandler(data.curClusterId).then((res) => {
-      data.items = res.data.data.items
+    if (!data.clusterId) {
+      data.items = []
+      return
+    }
+    getListHandler(data.clusterId, '', 'node').then((res) => {
+      data.items = res.data.data.items || []
     })
   }
 
   // 获取集群列表
   const getclusterOptions = async () => {
-    await getClusterListHandler().then((res) => {
+    await getListHandler('', '', 'cluster').then((res) => {
       if (res.data.status === 200) {
         data.clusterOptions = res.data.data.items
         console.log('获取集群列表:::', data.clusterOptions)
@@ -203,8 +203,10 @@
     title="节点列表"
     :op-cluster="true"
     :op-search="true"
+    :op-refresh="true"
     :default-cluster-id="data.defaultClusterId"
     @change="getSelectValue"
+    @refresh="getList"
   >
     <template #mainData>
       <el-table :data="filterTableData" style="width: 100%" height="1010px">
