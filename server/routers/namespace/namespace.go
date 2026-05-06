@@ -10,7 +10,7 @@ func create(namespaceGroup *gin.RouterGroup) {
 	namespaceGroup.POST("/create", namespace.Create)
 }
 func delete(namespaceGroup *gin.RouterGroup) {
-	namespaceGroup.GET("/delete", namespace.Delete)
+	namespaceGroup.POST("/delete", namespace.Delete)
 }
 func deleteList(namespaceGroup *gin.RouterGroup) {
 	namespaceGroup.POST("/deleteList", namespace.DeleteList)

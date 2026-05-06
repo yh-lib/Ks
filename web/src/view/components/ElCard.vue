@@ -2,7 +2,6 @@
   import { ElSelect } from 'element-plus'
   import { Refresh } from '@element-plus/icons-vue'
   import { onBeforeMount, reactive } from 'vue'
-  import { getNamespaceListHandler } from '../../api/namespace.js'
   // store from pinia
   import { useWorkLoadData } from '../../store'
   import { storeToRefs } from 'pinia'
@@ -72,7 +71,7 @@
   }
   // 获取 namespace 列表
   const getNsOptions = async () => {
-    await getNamespaceListHandler(data.clusterId).then((res) => {
+    await getListHandler(data.clusterId, '', 'namespace').then((res) => {
       if (res.data.status === 200) {
         data.nsOptions = res.data.data.items || []
       }

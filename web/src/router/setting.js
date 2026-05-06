@@ -5,7 +5,7 @@ export const settingRoutes = {
   children: [
     {
       path: 'namespaces',
-      component: () => import('../view/setting/Namespace.vue'),
+      component: () => import('../view/namespace/Namespace.vue'),
     },
     {
       path: 'rbac',
