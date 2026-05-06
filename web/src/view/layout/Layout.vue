@@ -8,7 +8,7 @@
   <el-container class="el-container">
     <Aside style="background: white"></Aside>
     <el-container class="el-container__el-container">
-      <Header style="height: 100px"></Header>
+      <Header style="height: 100px; margin-top: 10px"></Header>
       <Main></Main>
     </el-container>
   </el-container>

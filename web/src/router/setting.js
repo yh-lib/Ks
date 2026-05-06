@@ -11,5 +11,9 @@ export const settingRoutes = {
       path: 'rbac',
       component: () => import('../view/setting/Rbac.vue'),
     },
+    {
+      path: 'user',
+      component: () => import('../view/dashboard/dss.vue'),
+    },
   ],
 }

@@ -1,13 +1,11 @@
 <script setup>
   import { computed, ref, onBeforeMount, reactive } from 'vue'
   import { Refresh, CircleCheckFilled, WarningFilled } from '@element-plus/icons-vue'
-  import { getHandler, getListHandler } from '../../api/generic'
-  import ClusterSelect from './ClusterSelect.vue'
+  import { getListHandler } from '../../api/generic'
 
   onBeforeMount(async () => {
     await getClusterList()
-    itemForm.clusterId = itemForm.clusterItems[0].clusterId
-    itemForm.clusterItem = itemForm.clusterItems[0]
+    console.log('测试数据：：：', data.clusterItems)
   })
 
   const data = reactive({
@@ -16,44 +14,25 @@
     curClusterId: '',
   })
 
-  const itemForm = reactive({
-    // annotaions 获取集群状态
-    clusterItem: {},
-    clusterItems: [],
-    clusterId: '',
-    nodeNum: '',
-    podNum: '',
-    nsNum: '',
-    // 节点状态
-    nodeItems: '',
-    // pod状态
-    podItems: '',
-  })
-
-  const getClusterList = () => {
-    return new Promise((resolve, reject) => {
-      getListHandler('', '', 'cluster').then((res) => {
-        if (res.data.status === 200) {
-          itemForm.clusterItems = res.data.data.items
-          resolve() // 成功时调用 resolve
-        } else {
-          reject(new Error('请求失败')) // 失败时调用 reject
-        }
-      })
-    })
-  }
-
-  const getClusterItem = () => {
-    // console.log('当前clusterId:::', itemForm.clusterId)
-    getHandler(itemForm.clusterId, '', 'cluster', itemForm.clusterId).then((res) => {
+  // 获取集群列表
+  const getClusterList = async () => {
+    await getListHandler('', '', 'cluster').then((res) => {
       if (res.data.status === 200) {
-        itemForm.clusterItem = res.data.data.item
+        data.clusterItems = res.data.data.items // 获取集群列表
+        data.curClusterId = data.clusterItems[0].clusterId // 默认集群ID
       }
     })
   }
 
-  // +++++++++++++++++++++++++++++++++++
+  // 获取集群详情
+  const handleClusterChange = async (clusterId) => {
+    data.curClusterItem = data.clusterItems.find((item) => item.clusterId === clusterId) || {}
+  }
 
+  // 获取节点列表
+  const getNodeList = () => {}
+
+  // ++++++++++++++++++++++++++++++++++++++
   const clusterOptions = [
     { clusterId: 'cluster-01', clusterAlias: '生产集群 A' },
     { clusterId: 'cluster-02', clusterAlias: '测试集群 B' },
@@ -188,11 +167,40 @@
 
 <template>
   <div class="dashboard-page">
-    <cluster-select
-      :item-form="itemForm"
-      @get-cluster-list="getClusterList"
-      @get-cluster-item="getClusterItem"
-    ></cluster-select>
+    <!-- 获取集群信息 -->
+    <section class="page-header">
+      <div>
+        <div class="page-kicker">Cluster Dashboard</div>
+        <h1>{{ data.curClusterItem.clusterAlias }}</h1>
+        <p>
+          集群概览
+          <span class="hero-dot">·</span>
+          {{ data.curClusterItem.clusterVersion }}
+          <span class="hero-dot">·</span>
+          白色主题
+        </p>
+      </div>
+
+      <div class="hero-actions">
+        <el-select
+          v-model="data.curClusterId"
+          class="cluster-select"
+          filterable
+          placeholder="选择集群"
+          @change="handleClusterChange"
+        >
+          <el-option
+            v-for="item in data.clusterItems"
+            :key="item.clusterId"
+            :label="item.clusterAlias"
+            :value="item.clusterId"
+          />
+        </el-select>
+        <el-button style="border-radius: 12px" :icon="Refresh" @click="getClusterList">
+          刷新
+        </el-button>
+      </div>
+    </section>
 
     <section class="stats-grid">
       <article class="info-card">
@@ -304,6 +312,25 @@
     overflow: hidden;
   }
 
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    padding: 20px 22px;
+    border-radius: 24px;
+    background: #ffffff;
+    border: 1px solid #e6eaf0;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.04);
+  }
+
+  .page-kicker {
+    font-size: 12px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: #7c8798;
+  }
+
   .page-header h1 {
     margin: 8px 0 8px;
     font-size: 28px;
@@ -315,6 +342,38 @@
     margin: 0;
     color: #6b7280;
     font-size: 14px;
+  }
+
+  .hero-dot {
+    margin: 0 10px;
+  }
+
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+    padding: 12px;
+    border-radius: 16px;
+    border: 1px solid #e6eaf0;
+  }
+
+  .cluster-select {
+    width: 260px;
+  }
+
+  .cluster-select :deep(.el-input__wrapper) {
+    background: #ffffff;
+    box-shadow: inset 0 0 0 1px #d7dde6;
+    border-radius: 12px;
+  }
+
+  .cluster-select :deep(.el-input__inner) {
+    color: #111827;
+  }
+
+  .cluster-select :deep(.el-select__placeholder) {
+    color: #64748b;
   }
 
   .stats-grid {
@@ -436,6 +495,17 @@
       flex-direction: column;
       align-items: stretch;
     }
+
+    .hero-actions {
+      width: 100%;
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .cluster-select {
+      width: 100%;
+    }
+
     .stats-grid {
       grid-template-columns: 1fr 1fr;
     }
