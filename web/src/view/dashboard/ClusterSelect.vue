@@ -1,7 +1,7 @@
 <script setup>
   import { Refresh } from '@element-plus/icons-vue'
   const props = defineProps(['itemForm'])
-  const emit = defineEmits(['clusterChange', 'getClusterList', 'getClusterItem', 'getClusterInfo'])
+  const emit = defineEmits(['clusterChange', 'getClusterList', 'getClusterItem', 'refresh'])
 </script>
 
 <template>
@@ -53,7 +53,7 @@
           :value="item.clusterId"
         />
       </el-select>
-      <el-button style="border-radius: 12px" :icon="Refresh" @click="emit('getClusterInfo')">
+      <el-button style="border-radius: 12px" :icon="Refresh" @click="emit('refresh')">
         刷新
       </el-button>
     </div>

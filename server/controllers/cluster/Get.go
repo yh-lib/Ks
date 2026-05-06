@@ -23,6 +23,7 @@ func Get(c *gin.Context) {
 		logs.Info(map[string]any{"clusterId": clusterId}, "获取集群详情成功")
 		returnData.Status = 200
 		returnData.Message = "获取集群详情成功"
+		updateClusterStatus(*clusterDetail)
 		clusterConfigMap := clusterDetail.Annotations
 		clusterConfigMap["kubeconfig"] = string(clusterDetail.Data["kubeconfig"])
 		returnData.Data["item"] = clusterConfigMap

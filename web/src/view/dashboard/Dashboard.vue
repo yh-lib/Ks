@@ -3,6 +3,12 @@
   import { Refresh, CircleCheckFilled, WarningFilled } from '@element-plus/icons-vue'
   import { getHandler, getListHandler } from '../../api/generic'
   import ClusterSelect from './ClusterSelect.vue'
+  import ClusterInfo from './ClusterInfo.vue'
+
+  const refresh = () => {
+    console.log('执行刷新逻辑')
+    getClusterItem()
+  }
 
   onBeforeMount(async () => {
     await getClusterList()
@@ -10,24 +16,11 @@
     itemForm.clusterItem = itemForm.clusterItems[0]
   })
 
-  const data = reactive({
-    clusterItems: [],
-    curClusterItem: {},
-    curClusterId: '',
-  })
-
   const itemForm = reactive({
     // annotaions 获取集群状态
     clusterItem: {},
     clusterItems: [],
     clusterId: '',
-    nodeNum: '',
-    podNum: '',
-    nsNum: '',
-    // 节点状态
-    nodeItems: '',
-    // pod状态
-    podItems: '',
   })
 
   const getClusterList = () => {
@@ -48,12 +41,18 @@
     getHandler(itemForm.clusterId, '', 'cluster', itemForm.clusterId).then((res) => {
       if (res.data.status === 200) {
         itemForm.clusterItem = res.data.data.item
+        console.log('getClusterItem', itemForm.clusterItem)
       }
     })
   }
 
   // +++++++++++++++++++++++++++++++++++
 
+  const data = reactive({
+    clusterItems: [],
+    curClusterItem: {},
+    curClusterId: '',
+  })
   const clusterOptions = [
     { clusterId: 'cluster-01', clusterAlias: '生产集群 A' },
     { clusterId: 'cluster-02', clusterAlias: '测试集群 B' },
@@ -192,29 +191,10 @@
       :item-form="itemForm"
       @get-cluster-list="getClusterList"
       @get-cluster-item="getClusterItem"
-    ></cluster-select>
+      @refresh="refresh"
+    />
 
-    <section class="stats-grid">
-      <article class="info-card">
-        <div class="label">节点数</div>
-        <div class="value">{{ dashboard.clusterInfo.nodeCount }}</div>
-      </article>
-
-      <article class="info-card">
-        <div class="label">Pod 数</div>
-        <div class="value">{{ dashboard.clusterInfo.podCount }}</div>
-      </article>
-
-      <article class="info-card">
-        <div class="label">命名空间数</div>
-        <div class="value">{{ dashboard.clusterInfo.namespaceCount }}</div>
-      </article>
-
-      <article class="info-card">
-        <div class="label">版本</div>
-        <div class="value">{{ dashboard.clusterInfo.version }}</div>
-      </article>
-    </section>
+    <cluster-info :item-form="itemForm" />
 
     <section class="content-grid">
       <article class="section-card">
@@ -373,7 +353,7 @@
 
   .events-card {
     width: 100%;
-    height: 620px;
+    height: 580px;
     min-width: 0;
     box-sizing: border-box;
   }

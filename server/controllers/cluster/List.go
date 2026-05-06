@@ -2,7 +2,6 @@ package cluster
 
 import (
 	"context"
-	"fmt"
 	"server/config"
 	"server/utils/logs"
 	"strconv"
@@ -36,7 +35,6 @@ func updateClusterStatus(clusterInfo corev1.Secret) {
 		clusterInfo.Annotations["clusterStatus"] = "Inactive"
 		return
 	}
-	fmt.Println(serverVersion)
 	clusterVersion := serverVersion.String()
 	clusterInfo.Annotations["clusterVersion"] = clusterVersion
 	clusterInfo.Annotations["clusterStatus"] = "Active"
@@ -54,6 +52,13 @@ func updateClusterStatus(clusterInfo corev1.Secret) {
 		return
 	}
 	clusterInfo.Annotations["clusterPodNum"] = strconv.Itoa(len(pods.Items))
+	// Ns 数量
+	ns, err := clientSet.CoreV1().Namespaces().List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		logs.Error(map[string]any{"Error": err.Error()}, "Ns 数量获取失败")
+		return
+	}
+	clusterInfo.Annotations["clusterNsNum"] = strconv.Itoa(len(ns.Items))
 }
 
 func List(c *gin.Context) {
